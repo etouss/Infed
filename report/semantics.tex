@@ -1,0 +1,48 @@
+\section{Semantics}
+
+\subsection{$Eval_{SQL}$}
+
+\begin{mydef}
+$$ \sigma_{\Sigma}(x) = (x[r_i.a_i] | r_i.a_i \in \Sigma) $$
+\end{mydef}
+
+\begin{mydef}
+\begin{align*}
+	Eval_{SQL}((\Sigma,R,H_1\land H_2,P),D) & =  \llbracket \sigma_\Sigma(x)^n | x \in ^n Eval_{SQL}((*,R,H_1,P),D) \land  x \in ^n Eval_{SQL}((*,R,H_2,P),D)  \rrbracket \\
+	Eval_{SQL}((\Sigma,R,H_1\lor H_2,P),D) & =  \llbracket \sigma_\Sigma(x)^n | x \in ^n Eval_{SQL}((*,R,H_1,P),D) \lor  x \in ^n Eval_{SQL}((*,R,H_2,P),D)  \rrbracket \\
+	Eval_{SQL}((\Sigma,R,null(r_i.a_i),P),D) & = \llbracket \sigma_\Sigma(x)^n | x \in^n R, x[r_i.a_i] = \bot \rrbracket\\
+	Eval_{SQL}((\Sigma,R,const(r_i.a_i),P),D) & = \{\sigma_\Sigma(x) | x \in R,x[r_i.a_i] \neq \bot \}\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i = c_i,P),D) & = \{\sigma_\Sigma(x) | x \in R, x[r_i.a_i] = c_i  \}\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i = r_j.a_j,P),D) & = \{\sigma_\Sigma(x) | x \in R, x[r_i.a_i] = x[r_j.a_j] \land x[r_i.a_i] \neq \bot \land x[r_j.a_j] \neq \bot  \}\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i = p_i,P),D) & = \{\sigma_\Sigma(x) | x \in R, x[r_i.a_i] = P[p_i]  \land x[r_i.a_i] \neq \bot \land P[p_i] \neq \bot\}\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i \neq c_i,P),D) & =  \{\sigma_\Sigma(x) | x \in R, x[r_i.a_i] \neq c_i \land x[r_i.a_i] \neq \bot  \}\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i \neq r_j.a_j,P),D) & = \{\sigma_\Sigma(x) | x \in R, x[r_i.a_i] \neq x[r_j.a_j] \land x[r_i.a_i] \neq \bot \land x[r_j.a_j] \neq \bot  \}\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i \neq p_i,P),D) & = \{\sigma_\Sigma(x) | x \in R, x[r_i.a_i] \neq P[p_i] \land x[r_i.a_i] \neq \bot \land P[p_i] \neq \bot \}\\
+	Eval_{SQL}((\Sigma,R,exists(Q),P),D) & =  \{\sigma_\Sigma(x) | x \in R, Eval_{SQL}(Q[x],D) \neq \emptyset\}\\
+	Eval_{SQL}((\Sigma,R,notexists(Q),P),D) & =  \{\sigma_\Sigma(x) | x \in R, Eval_{SQL}(Q[x],D) = \emptyset\}\\
+\end{align*}
+\end{mydef}
+
+\begin{myprop}
+	$$\forall Q \in \llbracket SQL \rrbracket, cert_\bot((\Sigma,R,H,P),D) = \{x|\forall h, h(x)\in Eval_{SQL}((\Sigma,R,H,h(P)),h(D) \}$$
+\end{myprop}
+
+\begin{proof}
+	to do ! EvalSQL = EvalFO on complete database. and Q without null check.
+\end{proof}
+
+\begin{myprop}
+	$$\forall h,\forall Q \in  \llbracket SQL \rrbracket (\{y|h(y) \in Eval_{SQL}(Q,h(D))\} = \emptyset \Rightarrow Eval_{SQL}(Q,h(D)) = \emptyset)$$
+\end{myprop}
+
+\begin{proof}
+	\begin{align*}
+	Eval_{SQL}(Q,h(D)) \neq \emptyset & \Rightarrow   \exists x \in Eval_{SQL}(Q,h(D))
+	\\& \mbox{As } Eval_{SQL} \mbox{ has correctness guarentee on complete databases}
+	\\& \Rightarrow  \exists x, x \in Cert_{\bot}(Q,h(D))
+	\\& \Rightarrow  \exists x, \forall g, g(x) \in Eval_{SQL}(Q,g(h(D)))
+	\\& \Rightarrow  \exists x, \mbox{especialy } g=h, h(x) \in Eval_{SQL}(Q,h(h(D)))
+	\\& \Rightarrow \exists x, h(x) \in Eval_{SQL}(Q,h(D))
+	\\& \Rightarrow \{y|h(y) \in Eval_{SQL}(Q,h(D))\} \neq \emptyset
+	\end{align*}
+\end{proof}

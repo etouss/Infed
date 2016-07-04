@@ -1,0 +1,72 @@
+\section{Translation}
+
+\begin{align*}
+	(\Sigma,R,H,P)^+ & \rightarrow (\Sigma,R,H^*,P) \\
+	(\Sigma,R,H,P)^? & \rightarrow (\Sigma,R,H^{**},P) 
+\end{align*}
+
+\begin{align*}
+	(H_1 \land H_2)^* & \rightarrow H_1^* \land H_2^* \\
+	(H_1 \lor H_2)^* & \rightarrow H_1^* \lor H_2^* \\
+	(r_i.a_i = c_i)^* & \rightarrow r_i.a_i = c_i \\
+	(r_i.a_i \neq c_i)^*& \rightarrow r_i.a_i \neq c_i \\
+	(r_i.a_i = r_j.a_j)^* & \rightarrow r_i.a_i = r_j.a_j \\
+	(r_i.a_i \neq r_j.a_j)^* & \rightarrow r_i.a_i \neq r_j.a_j \\
+	null(r_i.a_i)^* & \rightarrow null(r_i.a_i) \\
+	const(r_i.a_i)^* & \rightarrow const(r_i.a_i) \\
+	exists(Q)^* & \rightarrow exists(Q^+) \\
+	notexists(Q)^* & \rightarrow notexists(Q^?) \\
+	in(r_i.a_i,Q)^* & \rightarrow in(r_i.a_i,Q^+) \\
+	notin(r_i.a_i,Q)^* & \rightarrow notin(r_i.a_i,Q^?) 
+\end{align*}
+
+\begin{align*}
+	(H_1 \land H_2)^{**} & \rightarrow H_1^{**} \land H_2^{**} \\
+	(H_1 \lor H_2)^{**} & \rightarrow H_1^{**} \lor H_2^{**} \\
+	(r_i.a_i = c_i)^{**} & \rightarrow r_i.a_i = c_i \lor null(r_i.a_i)\\
+	(r_i.a_i \neq c_i)^{**}& \rightarrow r_i.a_i \neq c_i \lor null(r_i.a_i)\\
+	(r_i.a_i = r_j.a_j)^{**} & \rightarrow r_i.a_i = r_j.a_j \lor null(r_i.a_i) \lor null(r_j.a_j)\\
+	(r_i.a_i \neq r_j.a_j)^{**} & \rightarrow r_i.a_i \neq r_j.a_j  \lor null(r_i.a_i) \lor null(r_j.a_j)\\
+	null(r_i.a_i)^{**} & \rightarrow null(r_i.a_i) \\
+	const(r_i.a_i)^{**} & \rightarrow const(r_i.a_i) \\
+	exists(Q)^{**} & \rightarrow exists(Q^?) \\
+	notexists(Q)^{**} & \rightarrow notexists(Q^+) \\
+	in(r_i.a_i,Q)^{**} & \rightarrow in(r_i.a_i,Q^?) \\
+	notin(r_i.a_i,Q)^{**} & \rightarrow notin(r_i.a_i,Q^+) 
+\end{align*}
+
+\begin{myprop}
+	$$\forall Q \in \llbracket SQL \rrbracket, Eval_{SQL}(Q^+,D) \subseteq cert_\bot(Q,D)$$
+\end{myprop}
+\begin{myprop}
+	$$\forall Q \in \llbracket SQL \rrbracket, posi_\bot(Q,D) = \{ x | \exists h, h(x) \in  Eval_{SQL}(Q,h(D)) \} \subseteq Eval_{SQL}(Q^?,D)$$
+\end{myprop}
+
+\begin{proof}
+	Assume (5).
+	\\By induction ...
+	\begin{align*}
+		x \in Eval_{SQL}((\Sigma,R,notexists(Q),P)^+,D) &\Rightarrow x \in Eval_{SQL}((\Sigma,R,notexists(Q^?),P),D) \\
+		&\Rightarrow Eval_{SQL}(Q^?[x],D) = \emptyset \\
+		&\Rightarrow \{ y | \exists h, h(y) \in  Eval_{SQL}(Q[h(x)],h(D)) \} = \emptyset \mbox{ (by 5)}\\
+		&\Rightarrow \forall h,\forall y, h(y) \notin Eval_{SQL}(Q[h(x)],h(D)) \\
+		&\Rightarrow \forall h, \{y | h(y) \in Eval_{SQL}(Q[h(x)],h(D))\} = \emptyset \\
+		&\Rightarrow \forall h, Eval_{SQL}(Q[h(x)],h(D) = \emptyset \mbox{ (by 3)} \\
+		&\Rightarrow \forall h, h(x) \in Eval_{SQL}((\Sigma,R,notexists(Q),h(P)),h(D))\\
+		&\Rightarrow  x \in cert_\bot((\Sigma,R,notexists(Q),P),D)
+	\end{align*}
+\end{proof}
+
+\begin{proof}
+	Assume (4).
+	\\By induction ...
+	\begin{align*}
+		x \in posi_\bot((\Sigma,R,notexists(Q),P),D) &\Rightarrow \exists h, h(x) \in Eval_{SQL}((\Sigma,R,notexists(Q),P),h(D))  \\
+		&\Rightarrow \exists h, Eval_{SQL}(Q[h(x)],h(D)) = \emptyset \\
+		&\Rightarrow \{y | \forall g, g(y) \in Eval_{SQL}(Q[g(x)],g(D))\} = \emptyset \\
+		&\Rightarrow Eval_{SQL}(Q^+[x],D) = \emptyset \mbox{ (by 4)}\\
+		&\Rightarrow x \in Eval_{SQL}(\Sigma,R,notexists(Q^+),P),D) \\
+		&\Rightarrow x \in Eval_{SQL}(\Sigma,R,notexists(Q),P)^?,D)
+	\end{align*}
+\end{proof}
+

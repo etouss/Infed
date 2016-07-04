@@ -1,0 +1,166 @@
+\section{Translation}
+
+\begin{align*}
+	(\Sigma,R,H,P)^+ & \rightarrow (\Sigma,R,H^*,P) \\
+	(\Sigma,R,H,P)^? & \rightarrow (\Sigma,R,H^{**},P) 
+\end{align*}
+
+\begin{align*}
+	(H_1 \land H_2)^* & \rightarrow H_1^* \land H_2^* \\
+	(H_1 \lor H_2)^* & \rightarrow H_1^* \lor H_2^* \\
+	(r_i.a_i = c_i)^* & \rightarrow r_i.a_i = c_i \\
+	(r_i.a_i \neq c_i)^*& \rightarrow r_i.a_i \neq c_i \land const(r_i.a_i)\\
+	(r_i.a_i = r_j.a_j)^* & \rightarrow r_i.a_i = r_j.a_j \\
+	(r_i.a_i \neq r_j.a_j)^* & \rightarrow r_i.a_i \neq r_j.a_j \land const(r_i.a_i) \land const(r_j.a_j)\\
+	null(r_i.a_i)^* & \rightarrow null(r_i.a_i) \\
+	const(r_i.a_i)^* & \rightarrow const(r_i.a_i) \\
+	exists(Q)^* & \rightarrow exists(Q^+) \\
+	notexists(Q)^* & \rightarrow notexists(Q^?) \\
+\end{align*}
+
+\begin{align*}
+	(H_1 \land H_2)^{**} & \rightarrow H_1^{**} \land H_2^{**} \\
+	(H_1 \lor H_2)^{**} & \rightarrow H_1^{**} \lor H_2^{**} \\
+	(r_i.a_i = c_i)^{**} & \rightarrow r_i.a_i = c_i \lor null(r_i.a_i)\\
+	(r_i.a_i \neq c_i)^{**}& \rightarrow r_i.a_i \neq c_i \\
+	(r_i.a_i = r_j.a_j)^{**} & \rightarrow r_i.a_i = r_j.a_j \lor null(r_i.a_i) \lor null(r_j.a_j)\\
+	(r_i.a_i \neq r_j.a_j)^{**} & \rightarrow r_i.a_i \neq r_j.a_j \\
+	null(r_i.a_i)^{**} & \rightarrow null(r_i.a_i) \\
+	const(r_i.a_i)^{**} & \rightarrow const(r_i.a_i) \\
+	exists(Q)^{**} & \rightarrow exists(Q^?) \\
+	notexists(Q)^{**} & \rightarrow notexists(Q^+) \\
+\end{align*}
+
+\begin{myprop}
+	$$\forall Q \in \llbracket SQL \rrbracket, Eval_{SQL}(Q^+,D) \subseteq cert_\bot(Q,D)$$
+\end{myprop}
+\begin{myprop}
+	$$\forall Q \in \llbracket SQL \rrbracket, posi_\bot(Q,D) \subseteq Eval_{SQL}(Q^?,D)$$
+\end{myprop}
+
+\begin{proof}
+	Assume (5).
+	\\By induction :
+	\begin{align*}
+		Q = (\Sigma,R,H_1\land H_2,P) \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{Eval_{SQL}(Q_*^+,D)(z)} \geq n  \\
+		Moreover\\
+		Eval_{SQL}(Q^+_*,D)(z)  = k & \Rightarrow  Eval_{SQL}((*,R,H_1^*\land H_2^*,P),D)(z)  = k \\
+		& \Rightarrow  (Eval_{SQL}((*,R,H_1^*,P),D) \cap Eval_{SQL}((*,R,H_2^*,P),D))(z)  = k \\
+		& \Rightarrow  (Eval_{SQL}((*,R,H_1,P)^+,D) \cap Eval_{SQL}((*,R,H_2,P)^+,D))(z)  = k \\
+		& \Rightarrow  (Eval_{SQL}((*,R,H_1,P)^+,D))(x) \geq k \land  (Eval_{SQL}((*,R,H_2,P)^+,D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot((*,R,H_1,P),D))(x) \geq k \land  (cert_\bot((*,R,H_2,P),D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot((*,R,H_1,P),D) \cap cert_\bot((*,R,H_2,P),D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot((*,R,H_1 \land H_2,P),D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot(Q_*,D))(z)  \geq k \\
+		Then \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{cert_\bot(Q_*,D)(z)} \geq n  \\
+		& \Rightarrow x \in^n cert_\bot(Q,D) \\
+	\end{align*}
+	\begin{align*}
+		Q = (\Sigma,R,H_1\lor H_2,P) \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{Eval_{SQL}(Q_*^+,D)(z)} \geq n  \\
+		Moreover\\
+		Eval_{SQL}(Q^+_*,D)(z)  = k & \Rightarrow  Eval_{SQL}((*,R,H_1^*\lor H_2^*,P),D)(z)  = k \\
+		& \Rightarrow  (Eval_{SQL}((*,R,H_1^*,P),D) \cup Eval_{SQL}((*,R,H_2^*,P),D))(z)  = k \\
+		& \Rightarrow  (Eval_{SQL}((*,R,H_1,P)^+,D) \cup Eval_{SQL}((*,R,H_2,P)^+,D))(z)  = k \\
+		& \Rightarrow  (Eval_{SQL}((*,R,H_1,P)^+,D))(x) \geq k \lor  (Eval_{SQL}((*,R,H_2,P)^+,D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot((*,R,H_1,P),D))(x) \geq k \lor  (cert_\bot((*,R,H_2,P),D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot((*,R,H_1,P),D) \cup cert_\bot((*,R,H_2,P),D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot((*,R,H_1 \lor H_2,P),D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot(Q_*,D))(z)  \geq k \\
+		Then \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{cert_\bot(Q_*,D)(z)} \geq n  \\
+		& \Rightarrow x \in^n cert_\bot(Q,D) \\
+	\end{align*}
+	\begin{align*}
+		Q = (\Sigma,R,notexists(Q'),P) \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{Eval_{SQL}(Q_*^+,D)(z)} \geq n  \\
+		Moreover\\
+		Eval_{SQL}(Q^+_*,D)(z)  = k & \Rightarrow  Eval_{SQL}((*,R,notexists(Q')^*,P),D)(z)  = k \\
+		& \Rightarrow  Eval_{SQL}((*,R,notexists(Q'^?),P),D)(z)  = k \\
+		& \Rightarrow R(z) = k \land Eval_{SQL}(Q'[z]^?,D) = \emptyset \\
+		& \Rightarrow R(z) = k \land posi_\bot(Q'[z],D) = \emptyset \\
+		& \Rightarrow R(z) = k \land \forall h, \forall w, h(w) \notin Eval_{SQL}(Q'[h(z)],h(D)) \\
+		& \Rightarrow R(z) = k \land \forall h , Eval_{SQL}(Q'[h(z)],h(D)) = \emptyset \\
+		& \Rightarrow R(z) = k \land \forall h, h(z) \in Eval_{SQL}((*,R,notexists(Q'),h(P)),h(D)) \\
+		& \Rightarrow cert_\bot(Q_*,D)(z) = k \\
+		Then \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{cert_\bot(Q_*,D)(z)} \geq n  \\
+		& \Rightarrow x \in^n cert_\bot(Q,D) \\
+	\end{align*}
+	\begin{align*}
+		Q = (\Sigma,R,r_i.a_i \neq p_i,P) \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{Eval_{SQL}(Q_*^+,D)(z)} \geq n  \\
+		Moreover\\
+		Eval_{SQL}(Q^+_*,D)(z)  = k & \Rightarrow  Eval_{SQL}((*,R,(r_i.a_i \neq p_i )^*,P),D)(z)  = k \\
+		& \Rightarrow Eval_{SQL}((*,R,r_i.a_i \neq p_i \land const(r_i,a_i) \land const(p_i),P),D)(z)  = k \\
+		& \Rightarrow R(x) = k \land x[r_i.a_i] \neq P[p_i] \land \forall t, x[r_i.a_i] \neq \bot_t \land \forall t, P[p_i] \neq \bot_t \\
+		Moreover \\
+		\forall t, x[r_i.a_i] \neq \bot_t \land \forall t, P[p_i] \neq \bot_t & \Rightarrow \forall h, h(x)[r_i.a_i] = x[r_i.a_i] \land h(P)[p_i] = P[p_i] \\
+		Then \\
+		Eval_{SQL}(Q^+_*,D)(z)  = k & \Rightarrow R(x) = k \land \forall h, h(x)[r_i.a_i] \neq h(P)[p_i] \\
+		& \Rightarrow cert_\bot(Q_*,D)(z) = k \\
+		Then \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{cert_\bot(Q_*,D)(z)} \geq n  \\
+		& \Rightarrow x \in^n cert_\bot(Q,D) \\
+	\end{align*}
+\end{proof}
+
+\begin{proof}
+	Assume (4).
+	\\By induction ...
+	\begin{align*}
+		Q = (\Sigma,R,H_1\land H_2,P) \\
+		x \in^n posi_\bot(Q,D) & \Rightarrow \sum_{z \in \{y | y \in posi_\bot(Q_*,D) \land \sigma_\Sigma(y) = x \} }{posi_\bot(Q_*,D)(z)} \geq n \\
+		Moreover\\
+		posi_\bot(Q_*,D)(z)  = k & \Rightarrow R(z) = k \land \exists h, h(z) \in Eval_{SQL}((*,R,H_1\land H_2,h(P)),h(D)) \\
+		& \Rightarrow R(z) = k \land \exists h, h(z) \in Eval_{SQL}((*,R,H_1,h(P)),h(D)) \land h(z) \in Eval_{SQL}((*,R,H_1,h(P)),h(D))\\
+		& \Rightarrow posi_\bot((*,R,H_1,P),D)(z) \geq k \land  posi_\bot((*,R,H_2,P),D)(z) \geq k\\
+		&\Rightarrow Eval_{SQL}((*,R,H_1,P)^?,D)(z) \geq k \land  Eval_{SQL}((*,R,H_2,P)^?,D)(z) \geq k\\
+		&\Rightarrow Eval_{SQL}((*,R,H_1^{**},P),D)(z) \geq k \land  Eval_{SQL}((*,R,H_2^{**},P),D)(z) \geq k\\
+		&\Rightarrow Eval_{SQL}((*,R,H_1^{**} \land H_2^{**},P),D)(z) \geq k\\
+		&\Rightarrow Eval_{SQL}((*,R,H_1 \land H_2,P)^?,D)(z) \geq k\\
+		&\Rightarrow Eval_{SQL}(Q_*^?,D)(z) \geq k\\
+		Then \\
+		x \in^n posi_\bot(Q,D) &\Rightarrow  \sum_{z \in \{y | y \in posi_\bot(Q_*,D) \land \sigma_\Sigma(y) = x \} }{Eval_{SQL}(Q_*^?,D)(z)} \geq n \\
+		& \Rightarrow x \in^n Eval_{SQL}(Q^?,D) \\
+	\end{align*}
+	
+	\begin{align*}
+		Q = (\Sigma,R,notexists(Q'),P) \\
+		x \in^n posi_\bot(Q,D) & \Rightarrow \sum_{z \in \{y | y \in posi_\bot(Q_*,D) \land \sigma_\Sigma(y) = x \} }{posi_\bot(Q_*,D)(z)} \geq n \\
+		Moreover\\
+		posi_\bot(Q_*,D)(z)  = k  & \Rightarrow  R(z) = k \land \exists h, h(z) \in  Eval_{SQL}((*,R,notexists(Q'),h(P)),h(D)) \\
+		& \Rightarrow  R(z) = k \land  \exists h, Eval_{SQL}(Q'[h(z)],h(D)) = \emptyset \\
+		&  \Rightarrow  R(z) = k \land  \llbracket w^n| \forall g, g(w) \in^n Eval_{SQL}((Q'[g(z)]),g(D)) \rrbracket = \emptyset \\ 
+		&  \Rightarrow  R(z) = k \land  cert_\bot(Q'[z],D) = \emptyset \\
+		&  \Rightarrow  R(z) = k \land  Eval(Q'[z]^+,D) = \emptyset \\
+		&  \Rightarrow  R(z) = k \land z \in Eval_{SQL}((*,R,notexists(Q'^+),P),D) \\
+		&  \Rightarrow  R(z) = k \land z \in Eval_{SQL}((*,R,notexists(Q')^{**},P),D) \\
+		&  \Rightarrow  Eval_{SQL}((*,R,notexists(Q'),P)^?,D)(z) = k \\
+		Then \\
+		x \in^n posi_\bot(Q,D) &\Rightarrow  \sum_{z \in \{y | y \in posi_\bot(Q_*,D) \land \sigma_\Sigma(y) = x \} }{Eval_{SQL}(Q_*^?,D)(z)} \geq n \\
+		& \Rightarrow x \in^n Eval_{SQL}(Q^?,D) \\
+	\end{align*}
+	
+	\begin{align*}
+		Q = (\Sigma,R,r_i.a_i = r_j.a_j,P) \\
+		x \in^n posi_\bot(Q,D) & \Rightarrow \sum_{z \in \{y | y \in posi_\bot(Q_*,D) \land \sigma_\Sigma(y) = x \} }{posi_\bot(Q_*,D)(z)} \geq n \\
+		Moreover\\
+		posi_\bot(Q_*,D)(z)  = k & \Rightarrow  R(z) = k \land \exists h, h(z) \in Eval_{SQL}((*,R,r_i.a_i = r_j.a_j,h(P)),h(D)) \\
+		& \Rightarrow  R(z) = k \land  \exists h, h(z)[r_i.a_i] = h(z)[r_j.a_j] \land h(z)[r_i.a_i] \neq \bot \land h(z)[r_j.a_j] \neq \bot  \\
+		Moreover \\
+		\exists h, h(z)[r_i.a_i] = h(z)[r_j.a_j] & \Rightarrow z[r_i.a_i] = z[r_j.a_j] \lor z[r_i.a_i]  = \bot \lor z[r_j.a_j] = \bot \\
+		\forall g, g(z)[r_i.a_i] \neq \bot & \Rightarrow \mbox{ TRUE} \\
+		Then\\
+		posi_\bot(Q_*,D)(z)  = k & \Rightarrow  R(z) = k \land z[r_i.a_i] = z[r_j.a_j] \lor z[r_i.a_i]  = \bot \lor z[r_j.a_j] = \bot \\
+		& \Rightarrow R(z) =k \land z \in Eval_{SQL}((*,R,(r_i.a_i = r_j.a_j \lor null(r_i.a_i) \lor null(r_j.a_j)),P),D) \\
+		& \Rightarrow R(z) =k \land z \in Eval_{SQL}((*,R,(r_i.a_i = r_j.a_j)^{**},P),D) \\
+		& \Rightarrow Eval_{SQL}((*,R,r_i.a_i = r_j.a_j,P)^?,D)(z) = k \\
+		Then \\
+		x \in^n posi_\bot(Q,D) &\Rightarrow  \sum_{z \in \{y | y \in posi_\bot(Q_*,D) \land \sigma_\Sigma(y) = x \} }{Eval_{SQL}(Q_*^?,D)(z)} \geq n \\
+		& \Rightarrow x \in^n Eval_{SQL}(Q^?,D) \\
+	\end{align*}
+\end{proof}
+

@@ -1,0 +1,6 @@
+\BOOKMARK [1][-]{section.1}{Preliminaries}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Syntaxic Sugar}{section.1}% 2
+\BOOKMARK [1][-]{section.2}{Semantics}{}% 3
+\BOOKMARK [2][-]{subsection.2.1}{EvalSQL}{section.2}% 4
+\BOOKMARK [1][-]{section.3}{Translation}{}% 5
+\BOOKMARK [1][-]{section.4}{Optimization}{}% 6

@@ -1,0 +1,135 @@
+\section{Removing useless null check}
+The translation $Q \rightarrow Q^+$ has an heavy cost has explained in the paper ..., in order to remove some useless null test we offer an optimization.
+
+\begin{mydef}
+	For each Query and nested Query we maintain a set of attributes that have to be not null in order for the query to be true resp. false we denote this set $\bot^T_{Q}$ resp.$\bot^F_{Q}$.
+\end{mydef} 
+
+%Contraintes montantes
+\begin{mydef}
+	\begin{align*}
+		\bot^T_{(\Sigma,R,H_1 \land H_2,P)} & = \bot^T_{(\Sigma,R,H_1,P)} \cup \bot^T_{(\Sigma,R,H_2,P)} \\
+		\bot^T_{(\Sigma,R,H_1 \lor H_2,P)} & = \bot^T_{(\Sigma,R,H_1,P)} \cap \bot^T_{(\Sigma,R,H_2,P)} \\
+		\bot^T_{(\Sigma,R,r_i.a_i = c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i \neq c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i = r_j.a_j,P)} & = \{r_i.a_i,r_j.a_j\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i \neq r_j.a_j,P)} & = \{r_i.a_i,r_j.a_j\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i = p_i,P)} & = \{r_i.a_i,p_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i \neq p_i,P)} & = \{r_i.a_i,p_i\} \\
+		\bot^T_{(\Sigma,R,null(r_i.a_i),P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,const(r_i.a_i),P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,exists(Q),P)} & = \bot^T_{Q[?]} \\
+		\bot^T_{(\Sigma,R,notexists(Q),P)} & = \bot^F_{Q[?]}\\
+	\end{align*}
+	
+	\begin{align*}
+		\bot^F_{(\Sigma,R,H_1 \land H_2,P)} & = \bot^F_{(\Sigma,R,H_1,P)} \cap \bot^F_{(\Sigma,R,H_2,P)} \\
+		\bot^F_{(\Sigma,R,H_1 \lor H_2,P)} & = \bot^F_{(\Sigma,R,H_1,P)} \cup \bot^F_{(\Sigma,R,H_2,P)} \\
+		\bot^F_{(\Sigma,R,r_i.a_i = c_i,P)} & =\emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i \neq c_i,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i = r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i \neq r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i = p_i,P)} & = \emptyset\\
+		\bot^F_{(\Sigma,R,r_i.a_i \neq p_i,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,null(r_i.a_i),P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,const(r_i.a_i),P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,exists(Q),P)} & = \bot^F_{Q[?]} \\
+		\bot^F_{(\Sigma,R,notexists(Q),P)} & = \bot^T_{Q[?]}\\
+	\end{align*}
+\end{mydef}
+
+\begin{myprop}
+	$$x \in Eval_{SQL}(Q_*,D)  \Rightarrow \forall r_i.a_i \in \bot^T_Q, x[r_i.a_i] \neq \bot$$
+	$$x \notin Eval_{SQL}(Q_*,D)  \Rightarrow \forall r_i.a_i \in \bot^F_Q, x[r_i.a_i] \neq \bot$$
+\end{myprop}
+
+\begin{proof}
+			
+\end{proof}
+
+
+\begin{mydef}
+	
+	\begin{align*}
+		nested^+(H_1\land H_2) & = \{H_1 \land H_2\}  \cup nested^+(H_1) \cup nested^+(H_2) \\
+		nested^+(H_1\lor H_2) & = \{H_1 \lor H_2\}  \cup nested^+(H_1) \cup nested^+(H_2) \\
+		nested^+(r_i.a_i = c_i) & = \{r_i.a_i = c_i\} \\
+		nested^+(r_i.a_i \neq c_i) & = \{r_i.a_i \neq c_i\} \\
+		nested^+(r_i.a_i = r_j.a_j) & = \{r_i.a_i = r_j.a_j\} \\
+		nested^+(null(r_i.a_i)) & = \{null(r_i.a_i)\} \\
+		nested^+(const(r_i.a_i)) & = \{const(r_i.a_i)\} \\
+		nested^+(exists(Q)) & = \{exists(Q)\} \cup nested^+(Q) \\
+		nested^+(notexists(Q)) & = \{notexists(Q)\} \cup nested^-(Q) \\
+	\end{align*}
+	
+	\begin{align*}
+		nested^-(H_1\land H_2) & =nested^-(H_1) \cup nested^-(H_2) \\
+		nested^-(H_1\lor H_2) & =  nested^-(H_1) \cup nested^-(H_2) \\
+		nested^-(r_i.a_i = c_i) & = \emptyset \\
+		nested^-(r_i.a_i \neq c_i) & = \emptyset \\
+		nested^-(r_i.a_i = r_j.a_j) & = \emptyset \\
+		nested^-(null(r_i.a_i)) & = \emptyset \\
+		nested^-(const(r_i.a_i)) & = \emptyset \\
+		nested^-(exists(Q)) & =nested^-(Q) \\
+		nested^-(notexists(Q)) & = nested^+(Q) \\
+	\end{align*}
+	
+	\begin{align*}
+		nested(Q) & = nested^-(Q) \cup nested^+(Q)
+	\end{align*}
+\end{mydef}
+
+\begin{mydef}
+	\begin{align*}
+		notexists(Q')^\bot_Q & \rightarrow notexists(Q'^\bot_Q)
+		\\exists(Q')^\bot_Q & \rightarrow exists(Q'^\bot_Q)
+	\end{align*}
+\end{mydef}
+
+\begin{mydef}
+	\begin{align*}
+		(\Sigma,R,H \lor null(r_i.a_i),P)^\bot_Q & \rightarrow (\Sigma,R,H^\bot_{Q},P) \\
+		& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^T_{Q'} \\
+		& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'}
+	\end{align*}
+\end{mydef}
+
+
+
+\begin{myprop}
+	$$Eval_{SQL}(Q,D) = Eval_{SQL}(Q^\bot_Q,D)$$
+\end{myprop}
+
+\begin{proof}
+	
+	\begin{mydef}
+		\begin{align*}
+			(\Sigma,R,H \lor null(r_i.a_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
+			& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^T_{Q'} \\
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'}
+		\end{align*}
+	\end{mydef}
+	
+	\begin{myprop}
+		$$\forall Q' \in nested^+(Q), Eval(Q,D) = Eval(Q^\bot_{Q'},D)$$
+	\end{myprop}
+	\begin{myprop}
+		$$\forall Q' \in nested^-(Q), Eval(Q,D) = Eval(Q^{\bot^F}_{Q'},D)$$
+	\end{myprop}
+	
+	\begin{proof}
+		Assume (10).
+		\\By Induction ...
+		\\$H_1 \land H_2 \in nested^+(Q)$
+		\\$\exists r_i.a_i \in (\bot^T_{H_1} \setminus \bot^T_{H_2}) \land (H\lor null(r_i.a_i)\in nested(H_2)$
+		\\Then if $x[r_i.a_i] = \bot$, $Eval(H^T_{2,H_2},D,x)$ might be different from $Eval(H^T_{2,H_1\land H_2},D,x)$
+	\end{proof}
+	
+	
+\end{proof}
+
+\begin{myprop}
+	
+\end{myprop}
+
+\section{Moving up null check}

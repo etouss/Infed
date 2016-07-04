@@ -1,0 +1,65 @@
+\section{Semantics}
+
+\begin{mydef}
+$$ \sigma_{\Sigma}(x) = (x[r_i.a_i] | r_i.a_i \in \Sigma) $$
+$$ \sigma_{*}(x) = x $$
+\end{mydef}
+
+\begin{mydef}
+	$$ \sigma_{\Sigma}(B) = \llbracket y^n | n = \sum_{x \in \{ z | z \in \{B\} \land \sigma_{\Sigma}(z) = y \} } B(x) \rrbracket $$
+\end{mydef}
+
+\begin{mydef}
+\begin{align*}
+	Eval_{SQL}((\Sigma,R,H_1\land H_2,P),D) & = \sigma_{\Sigma}(Eval_{SQL}((*,R,H_1,P),D) \cap Eval_{SQL}((*,R,H_2,P),D)) \\
+	Eval_{SQL}((\Sigma,R,H_1\lor H_2,P),D) & =  \sigma_{\Sigma}(Eval_{SQL}((*,R,H_1,P),D) \cup Eval_{SQL}((*,R,H_2,P),D)) \\
+	Eval_{SQL}((\Sigma,R,null(r_i.a_i),P),D) & =\sigma_\Sigma(\llbracket x^n | R(x) = n \land \exists t, x[r_i.a_i] = \bot_t  \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,const(r_i.a_i),P),D) & = \sigma_\Sigma(\llbracket x^n | R(x) = n \land \forall t, x[r_i.a_i] \neq \bot_t  \rrbracket) \\
+	Eval_{SQL}((\Sigma,R,r_i.a_i = c_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R(x) = n \land x[r_i.a_i] = c_i \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i = r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] = x[r_j.a_j]   \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i = p_i,P),D) & = \sigma_\Sigma( \llbracket  x^n  | R(x) = n \land x[r_i.a_i] = P[p_i]  \rrbracket )\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i \neq c_i,P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] \neq c_i \land \forall t, x[r_i.a_i] \neq \bot_t  \rrbracket )\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i \neq r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] \neq x[r_j.a_j] \land \forall t, x[r_i.a_i] \neq \bot_t \land \forall t, x[r_j.a_j] \neq \bot_t  \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i \neq p_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R(x) = n \land x[r_i.a_i] \neq P[p_i] \land \forall t, x[r_i.a_i] \neq \bot_t \land \forall t, P[p_i] \neq \bot_t \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,exists(Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \land Eval_{SQL}(Q[x],D) \neq \emptyset \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,notexists(Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \land Eval_{SQL}(Q[x],D) = \emptyset \rrbracket)\\
+\end{align*}
+	
+	\iffalse 
+	\begin{align*}
+		Eval_{SQL}(Q \setminus Q',D) & = 	Eval_{SQL}(Q,D) \setminus Eval_{SQL}(Q',D) \\
+		Eval_{SQL}(Q \cup Q',D) & = 	Eval_{SQL}(Q,D) \cup Eval_{SQL}(Q',D) \\
+		Eval_{SQL}(Q \uplus Q',D) & = 	Eval_{SQL}(Q,D) \uplus Eval_{SQL}(Q',D) \\
+		Eval_{SQL}(Q \cap Q',D) & = 	Eval_{SQL}(Q,D) \cap Eval_{SQL}(Q',D) \\
+		Eval_{SQL}(distinct(Q),D) & = 	\llbracket x^1 | x \in \{Eval_{SQL}(Q,D)\} \rrbracket \\
+	\end{align*}
+	\fi
+
+\end{mydef}
+
+\begin{mydef}
+	With marked nulls we have:
+	$$cert_\bot(Q,D) = \llbracket x^n | \forall h, h(x) \in^n Eval_{SQL}(Q,h(D)) \rrbracket$$
+\end{mydef}
+
+\begin{mydef}
+	$$ posi_\bot((\Sigma,R,H,P),D) =  \sigma_{\Sigma}(\llbracket x^n| R(x) = n \land \exists h, h(x) \in \{Eval_{SQL}((*,R,H,h(P)),h(D))\} \rrbracket) $$
+\end{mydef}
+
+\begin{myprop}
+	$$\sigma_\Sigma(cert_{\bot}((*,R,H,P),D)) \subseteq cert_{\bot}((\Sigma,R,H,P),D)$$ 
+	probably equality but i dont manage to prove it and i dont need it.
+\end{myprop}
+\begin{proof}
+	\begin{align*}
+		Q = (\Sigma,R,H,P) \\
+		x \in^n \sigma_\Sigma(cert_{\bot}(Q_*,D)) & \Rightarrow \sum_{z \in \{y | y \in cert_{\bot}(Q_*,D) \land \sigma_\Sigma(y) = x \} }{cert_{\bot}(Q*,D)(z)} \geq n \\
+		Moreover \\
+		\forall g, cert_\bot(Q_*,D) &  \subseteq Eval(Q_*,g(D)) \\
+		Then \\
+		x \in^n \sigma_\Sigma(cert_{\bot}(Q_*,D)) & \Rightarrow \forall g , \sum_{z \in \{y | y \in Eval(Q_*,g(D)) \land \sigma_\Sigma(y) = x \} }{Eval(Q_*,g(D)) (z)} \geq n \\
+		& \Rightarrow \forall g, Eval(Q,g(D))(x) \geq n \\
+		& \Rightarrow x \in^n cert_\bot(Q,D) \\
+	\end{align*}
+\end{proof}	
+

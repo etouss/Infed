@@ -1,0 +1,85 @@
+%!TEX root = main.tex
+
+To do : A lot :) 
+(SAT/SMT SOLVER ??? ) to evaluate what we loose ?  
+
+\section{Preliminaries}
+
+\begin{mydef}
+	We denote the Set of well formed select query without agregation, full join and null test by $\llbracket SQL\rrbracket$
+	\\We denote the Set of well formed select query without agregation and full join by $\llbracket SQL\rrbracket _\bot$
+\end{mydef}
+
+\begin{mydef}
+Let's a Select query $Q \in \llbracket SQL\rrbracket$ a tuple $(\Sigma,R,H,P)$ such that
+\begin{align*}
+\Sigma & \subseteq \{r_i.a_i | \exists r_i \in R \land \exists a_i \in r_i \} \\
+P & \subseteq \{p_i = r_j.a_j | r_j \notin R\} \mbox{ a set of external parameter.}\\
+R & \mbox{ a set of relation.}\\
+H &  \mbox{ belongs to the following grammar}\\
+\end{align*}
+
+\begin{align*}
+H ::= &\ r_i.a_i = c_i \; |\; r_i.a_i \neq c_j \; |\; r_i.a_i = r_j.a_j \; |\;  r_i.a_i \neq r_j.a_j \;  |\; r_i.a_i = p_i\; |\; 
+\\ &  exists(Q) \; |\; notexists(Q) \; |\; in(r_i.a_i,Q) \; |\; notin(r_i.a_i,Q) \; |\; 
+\\ & H\land H \; |\; H \lor H 
+\\
+\end{align*}
+
+\end{mydef}
+
+\begin{mydef}
+Let's a Select query $Q \in \llbracket SQL\rrbracket _\bot$ a tuple $(\Sigma,R,H,P)$ such that
+\begin{align*}
+\Sigma & \subseteq \{r_i.a_i | \exists r_i \in R \land \exists a_i \in r_i \} \\
+P & \subseteq \{p_i = r_j.a_j | r_j \notin R\} \mbox{ a set of external parameter.}\\
+R & \mbox{ a set of relation.}\\
+H_\bot &  \mbox{ belongs to the following grammar}\\
+\end{align*}
+
+\begin{align*}
+H_{\bot} ::= &\ r_i.a_i = c_i \; |\; r_i.a_i \neq c_j \; |\; r_i.a_i = r_j.a_j \; |\;  r_i.a_i \neq r_j.a_j \; |
+\\&  r_i.a_i = p_i\; |\; null(r_i.a_i) \; |\;  const(r_i.a_i)\;
+\\ &  exists(Q_{\bot}) \; |\; notexists(Q_{\bot}) \; |\; in(r_i.a_i,Q_{\bot}) \; |\; notin(r_i.a_i,Q_{\bot}) \; |\; 
+\\ & H_{\bot}\land H_{\bot} \; |\; H_{\bot} \lor H_{\bot} 
+\end{align*}
+
+\end{mydef}
+
+We denote $(\Sigma,R,H,P)[x]$ the query $(\Sigma,R,H,P\cup x)$
+\\We denote $(\Sigma,R,H,P)_*$ the query $(*,R,H,P)$
+
+\begin{myprop}
+	$$\llbracket SQL\rrbracket \subset \llbracket SQL\rrbracket _\bot$$
+\end{myprop}
+
+\begin{mydef}
+	We call a bag $B$ a function $D \rightarrow \NN$ such that $B(x)$ represents the multiplicity of $x$ in the bag $B$.  
+\end{mydef}
+
+\begin{mydef}
+	\begin{align*}
+		\forall x, \emptyset(x)  & = 0 \\
+		\forall x, (B_1 \cap B_2)(x)  & = min(B_1(x),B_2(x)) \\
+		\forall x, (B_1 \cup B_2)(x)  & = max(B_1(x),B_2(x)) \\
+		\forall x, (B_1 \uplus B_2)(x)  & = B_1(x) + B_2(x) \\
+		\forall x, (B_1 \setminus B_2)(x)  & = max(0,B_1(x) - B_2(x)) \\
+		\forall x, \llbracket a \rrbracket(x) & = \left\{\begin{array}{ll}
+			1 \mbox{ if } x = a \\
+			0 \mbox{ otherwise}
+		\end{array}\right. \\
+		\forall x, \llbracket a^n \rrbracket(x) & = \left\{\begin{array}{ll}
+			n \mbox{ if } x = a \\
+			0 \mbox{ otherwise}
+		\end{array}\right. \\
+		\forall x, \llbracket y^n | P(y,n) \rrbracket(x)  & = max(\{ i | P(x,i) \}) \\
+		x \in B & \iff B(x) \geq 1 \\
+		x \in^n B & \iff B(x) \geq n \\
+		x \notin B & \iff B(x) = 0 \\
+		B_1 = B_2 &  \iff \forall x, B_1(x) = B_2(x) \\
+		B_1 \subseteq B_2 &  \iff \forall x, B_1(x) \leq B_2(x) \\
+		\{B\}  & = \{x | B(x) \geq 1\} \\
+	\end{align*}
+\end{mydef}
+
+
