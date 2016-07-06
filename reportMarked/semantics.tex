@@ -15,12 +15,20 @@ $$ \sigma_{*}(x) = x $$
 	Eval_{SQL}((\Sigma,R,H_1\lor H_2,P),D) & =  \sigma_{\Sigma}(Eval_{SQL}((*,R,H_1,P),D) \cup Eval_{SQL}((*,R,H_2,P),D)) \\
 	Eval_{SQL}((\Sigma,R,null(r_i.a_i),P),D) & =\sigma_\Sigma(\llbracket x^n | R(x) = n \land \exists t, x[r_i.a_i] = \bot_t  \rrbracket)\\
 	Eval_{SQL}((\Sigma,R,const(r_i.a_i),P),D) & = \sigma_\Sigma(\llbracket x^n | R(x) = n \land \forall t, x[r_i.a_i] \neq \bot_t  \rrbracket) \\
+	Eval_{SQL}((\Sigma,R,null(p_i),P),D) & =\sigma_\Sigma(\llbracket x^n | R(x) = n \land \exists t, P[p_i] = \bot_t  \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,const(p_i),P),D) & = \sigma_\Sigma(\llbracket x^n | R(x) = n \land \forall t, P[p_i] \neq \bot_t  \rrbracket) \\
 	Eval_{SQL}((\Sigma,R,r_i.a_i = c_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R(x) = n \land x[r_i.a_i] = c_i \rrbracket)\\
 	Eval_{SQL}((\Sigma,R,r_i.a_i = r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] = x[r_j.a_j]   \rrbracket)\\
 	Eval_{SQL}((\Sigma,R,r_i.a_i = p_i,P),D) & = \sigma_\Sigma( \llbracket  x^n  | R(x) = n \land x[r_i.a_i] = P[p_i]  \rrbracket )\\
 	Eval_{SQL}((\Sigma,R,r_i.a_i \neq c_i,P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] \neq c_i \land \forall t, x[r_i.a_i] \neq \bot_t  \rrbracket )\\
 	Eval_{SQL}((\Sigma,R,r_i.a_i \neq r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] \neq x[r_j.a_j] \land \forall t, x[r_i.a_i] \neq \bot_t \land \forall t, x[r_j.a_j] \neq \bot_t  \rrbracket)\\
 	Eval_{SQL}((\Sigma,R,r_i.a_i \neq p_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R(x) = n \land x[r_i.a_i] \neq P[p_i] \land \forall t, x[r_i.a_i] \neq \bot_t \land \forall t, P[p_i] \neq \bot_t \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i > c_i,P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] > c_i  \rrbracket )\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i > r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] > x[r_j.a_j]  \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i > p_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R(x) = n \land x[r_i.a_i] > P[p_i]  \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i < c_i,P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] < c_i  \rrbracket )\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i < r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] < x[r_j.a_j]   \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i < p_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R(x) = n \land x[r_i.a_i] < P[p_i] \rrbracket)\\
 	Eval_{SQL}((\Sigma,R,exists(Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \land Eval_{SQL}(Q[x],D) \neq \emptyset \rrbracket)\\
 	Eval_{SQL}((\Sigma,R,notexists(Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \land Eval_{SQL}(Q[x],D) = \emptyset \rrbracket)\\
 \end{align*}

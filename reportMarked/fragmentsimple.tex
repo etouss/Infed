@@ -10,10 +10,16 @@
 	(H_1 \lor H_2)^* & \rightarrow H_1^* \lor H_2^* \\
 	(r_i.a_i = c_i)^* & \rightarrow r_i.a_i = c_i \\
 	(r_i.a_i \neq c_i)^*& \rightarrow r_i.a_i \neq c_i \land const(r_i.a_i)\\
+	(r_i.a_i > c_i)^*& \rightarrow r_i.a_i > c_i \\
+	(r_i.a_i < c_i)^*& \rightarrow r_i.a_i < c_i \\
 	(r_i.a_i = r_j.a_j)^* & \rightarrow r_i.a_i = r_j.a_j \\
 	(r_i.a_i \neq r_j.a_j)^* & \rightarrow r_i.a_i \neq r_j.a_j \land const(r_i.a_i) \land const(r_j.a_j)\\
-	null(r_i.a_i)^* & \rightarrow null(r_i.a_i) \\
-	const(r_i.a_i)^* & \rightarrow const(r_i.a_i) \\
+	(r_i.a_i > r_j.a_j)^* & \rightarrow r_i.a_i > r_j.a_j \\
+	(r_i.a_i < r_j.a_j)^* & \rightarrow r_i.a_i < r_j.a_j \\
+	(r_i.a_i = p_j)^* & \rightarrow r_i.a_i = p_j \\
+	(r_i.a_i \neq p_j)^* & \rightarrow r_i.a_i \neq p_j \land const(r_i.a_i) \land const(p_j)\\
+	(r_i.a_i > p_j)^* & \rightarrow r_i.a_i > p_j \\
+	(r_i.a_i < p_j)^* & \rightarrow r_i.a_i < p_j \\
 	exists(Q)^* & \rightarrow exists(Q^+) \\
 	notexists(Q)^* & \rightarrow notexists(Q^?) \\
 \end{align*}
@@ -23,10 +29,16 @@
 	(H_1 \lor H_2)^{**} & \rightarrow H_1^{**} \lor H_2^{**} \\
 	(r_i.a_i = c_i)^{**} & \rightarrow r_i.a_i = c_i \lor null(r_i.a_i)\\
 	(r_i.a_i \neq c_i)^{**}& \rightarrow r_i.a_i \neq c_i \\
+	(r_i.a_i > c_i)^{**} & \rightarrow r_i.a_i > c_i \lor null(r_i.a_i)\\
+	(r_i.a_i < c_i)^{**} & \rightarrow r_i.a_i < c_i \lor null(r_i.a_i)\\
 	(r_i.a_i = r_j.a_j)^{**} & \rightarrow r_i.a_i = r_j.a_j \lor null(r_i.a_i) \lor null(r_j.a_j)\\
 	(r_i.a_i \neq r_j.a_j)^{**} & \rightarrow r_i.a_i \neq r_j.a_j \\
-	null(r_i.a_i)^{**} & \rightarrow null(r_i.a_i) \\
-	const(r_i.a_i)^{**} & \rightarrow const(r_i.a_i) \\
+	(r_i.a_i > r_j.a_j)^{**} & \rightarrow r_i.a_i > r_j.a_j \lor \left( (null(r_i.a_i) \lor null(r_j.a_j)) \land r_i.a_i \neq r_j.a_j \right) \\
+	(r_i.a_i < r_j.a_j)^{**} & \rightarrow r_i.a_i < r_j.a_j \lor \left( (null(r_i.a_i) \lor null(r_j.a_j)) \land r_i.a_i \neq r_j.a_j \right) \\
+	(r_i.a_i = p_j)^{**} & \rightarrow r_i.a_i = p_j \lor null(r_i.a_i) \lor null(p_j)\\
+	(r_i.a_i \neq p_j)^{**} & \rightarrow r_i.a_i \neq p_j \\
+	(r_i.a_i > p_j)^{**} & \rightarrow r_i.a_i > p_j \lor \left( (null(r_i.a_i) \lor null(p_j)) \land r_i.a_i \neq p_j \right) \\
+	(r_i.a_i < p_j)^{**} & \rightarrow r_i.a_i < p_j \lor \left( (null(r_i.a_i) \lor null(p_j)) \land r_i.a_i \neq p_j \right) \\
 	exists(Q)^{**} & \rightarrow exists(Q^?) \\
 	notexists(Q)^{**} & \rightarrow notexists(Q^+) \\
 \end{align*}

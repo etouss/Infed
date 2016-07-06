@@ -1,8 +1,7 @@
 \section{Removing useless null check}
-The translation $Q \rightarrow Q^+$ has an heavy cost has explained in the paper ..., in order to remove some useless null test we offer an optimization.
-
+The translation $Q \rightarrow Q^+$ has an heavy cost has explained in the paper ..., in order to not add some useless null test we offer an optimization.
 \begin{mydef}
-	For each Query and nested Query we maintain a set of attributes that have to be not null in order for the query to be true resp. false we denote this set $\bot^T_{Q}$ resp.$\bot^F_{Q}$.
+For each Query and nested Query we maintain a set of attributes that have to be not null in order for the query to be true resp. false we denote this set $\bot^T_{Q}$ resp.$\bot^F_{Q}$ without taking null check in account.
 \end{mydef} 
 
 %Contraintes montantes
@@ -12,12 +11,16 @@ The translation $Q \rightarrow Q^+$ has an heavy cost has explained in the paper
 		\bot^T_{(\Sigma,R,H_1 \lor H_2,P)} & = \bot^T_{(\Sigma,R,H_1,P)} \cap \bot^T_{(\Sigma,R,H_2,P)} \\
 		\bot^T_{(\Sigma,R,r_i.a_i = c_i,P)} & = \{r_i.a_i\} \\
 		\bot^T_{(\Sigma,R,r_i.a_i \neq c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i > c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i < c_i,P)} & = \{r_i.a_i\} \\
 		\bot^T_{(\Sigma,R,r_i.a_i = r_j.a_j,P)} & = \emptyset \\
 		\bot^T_{(\Sigma,R,r_i.a_i \neq r_j.a_j,P)} & = \{r_i.a_i,r_j.a_j\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i > r_j.a_j,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i < r_j.a_j,P)} & = \emptyset \\
 		\bot^T_{(\Sigma,R,r_i.a_i = p_i,P)} & = \emptyset \\
 		\bot^T_{(\Sigma,R,r_i.a_i \neq p_i,P)} & = \{r_i.a_i,p_i\} \\
-		\bot^T_{(\Sigma,R,null(r_i.a_i),P)} & = \emptyset \\
-		\bot^T_{(\Sigma,R,const(r_i.a_i),P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i > p_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i < p_i,P)} & = \emptyset \\
 		\bot^T_{(\Sigma,R,exists(Q),P)} & = \bot^T_{Q[?]} \\
 		\bot^T_{(\Sigma,R,notexists(Q),P)} & = \bot^F_{Q[?]}\\
 	\end{align*}
@@ -27,12 +30,16 @@ The translation $Q \rightarrow Q^+$ has an heavy cost has explained in the paper
 		\bot^F_{(\Sigma,R,H_1 \lor H_2,P)} & = \bot^F_{(\Sigma,R,H_1,P)} \cup \bot^F_{(\Sigma,R,H_2,P)} \\
 		\bot^F_{(\Sigma,R,r_i.a_i = c_i,P)} & =\emptyset \\
 		\bot^F_{(\Sigma,R,r_i.a_i \neq c_i,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i > c_i,P)} & =\emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i < c_i,P)} & =\emptyset \\
 		\bot^F_{(\Sigma,R,r_i.a_i = r_j.a_j,P)} & = \emptyset \\
 		\bot^F_{(\Sigma,R,r_i.a_i \neq r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i > r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i < r_j.a_j,P)} & = \emptyset \\
 		\bot^F_{(\Sigma,R,r_i.a_i = p_i,P)} & = \emptyset\\
 		\bot^F_{(\Sigma,R,r_i.a_i \neq p_i,P)} & = \emptyset \\
-		\bot^F_{(\Sigma,R,null(r_i.a_i),P)} & = \emptyset \\
-		\bot^F_{(\Sigma,R,const(r_i.a_i),P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i > p_i,P)} & = \emptyset\\
+		\bot^F_{(\Sigma,R,r_i.a_i < p_i,P)} & = \emptyset\\
 		\bot^F_{(\Sigma,R,exists(Q),P)} & = \bot^F_{Q[?]} \\
 		\bot^F_{(\Sigma,R,notexists(Q),P)} & = \bot^T_{Q[?]}\\
 	\end{align*}
@@ -55,9 +62,16 @@ The translation $Q \rightarrow Q^+$ has an heavy cost has explained in the paper
 		nested^+(H_1\lor H_2) & = \{H_1 \lor H_2\}  \cup nested^+(H_1) \cup nested^+(H_2) \\
 		nested^+(r_i.a_i = c_i) & = \{r_i.a_i = c_i\} \\
 		nested^+(r_i.a_i \neq c_i) & = \{r_i.a_i \neq c_i\} \\
+		nested^+(r_i.a_i > c_i) & = \{r_i.a_i > c_i\} \\
+		nested^+(r_i.a_i < c_i) & = \{r_i.a_i < c_i\} \\
 		nested^+(r_i.a_i = r_j.a_j) & = \{r_i.a_i = r_j.a_j\} \\
-		nested^+(null(r_i.a_i)) & = \{null(r_i.a_i)\} \\
-		nested^+(const(r_i.a_i)) & = \{const(r_i.a_i)\} \\
+		nested^+(r_i.a_i \neq r_j.a_j) & = \{r_i.a_i \neq r_j.a_j\} \\
+		nested^+(r_i.a_i > r_j.a_j) & = \{r_i.a_i > r_j.a_j\} \\
+		nested^+(r_i.a_i < r_j.a_j) & = \{r_i.a_i < r_j.a_j\} \\
+		nested^+(r_i.a_i = p_j) & = \{r_i.a_i = p_j\} \\
+		nested^+(r_i.a_i \neq p_j) & = \{r_i.a_i \neq p_j\} \\
+		nested^+(r_i.a_i > p_j) & = \{r_i.a_i > p_j\} \\
+		nested^+(r_i.a_i < p_j) & = \{r_i.a_i < p_j\} \\
 		nested^+(exists(Q)) & = \{exists(Q)\} \cup nested^+(Q) \\
 		nested^+(notexists(Q)) & = \{notexists(Q)\} \cup nested^-(Q) \\
 	\end{align*}
@@ -67,9 +81,16 @@ The translation $Q \rightarrow Q^+$ has an heavy cost has explained in the paper
 		nested^-(H_1\lor H_2) & =  nested^-(H_1) \cup nested^-(H_2) \\
 		nested^-(r_i.a_i = c_i) & = \emptyset \\
 		nested^-(r_i.a_i \neq c_i) & = \emptyset \\
+		nested^-(r_i.a_i > c_i) & = \emptyset \\
+		nested^-(r_i.a_i < c_i) & = \emptyset \\
 		nested^-(r_i.a_i = r_j.a_j) & = \emptyset \\
-		nested^-(null(r_i.a_i)) & = \emptyset \\
-		nested^-(const(r_i.a_i)) & = \emptyset \\
+		nested^-(r_i.a_i \neq r_j.a_j) & = \emptyset \\
+		nested^-(r_i.a_i > r_j.a_j) & = \emptyset \\
+		nested^-(r_i.a_i < r_j.a_j) & = \emptyset \\
+		nested^-(r_i.a_i = p_j) & = \emptyset \\
+		nested^-(r_i.a_i \neq p_j) & = \emptyset \\
+		nested^-(r_i.a_i > p_j) & = \emptyset \\
+		nested^-(r_i.a_i < p_j) & = \emptyset \\
 		nested^-(exists(Q)) & =nested^-(Q) \\
 		nested^-(notexists(Q)) & = nested^+(Q) \\
 	\end{align*}
@@ -90,14 +111,23 @@ The translation $Q \rightarrow Q^+$ has an heavy cost has explained in the paper
 	\begin{align*}
 		(\Sigma,R,H \lor null(r_i.a_i),P)^\bot_Q & \rightarrow (\Sigma,R,H^\bot_{Q},P) \\
 		& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^T_{Q'} \\
-		& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'}
+		& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'} \\
+		(\Sigma,R,H \lor null(p_i),P)^\bot_Q & \rightarrow (\Sigma,R,H^\bot_{Q},P) \\
+		& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(p_i)) \in nested(Q'), p_i \in \bot^T_{Q'} \\
+		& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(p_i)) \in nested(Q'), p_i \in \bot^F_{Q'} \\
+		(\Sigma,R,H \land const(r_i.a_i),P)^\bot_Q & \rightarrow (\Sigma,R,H^\bot_{Q},P) \\
+		& \mbox{if } \exists Q' \in nested^+(Q), (H\land const(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^T_{Q'} \\
+		& \mbox{if } \exists Q' \in nested^-(Q), (H\land const(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'} \\
+		(\Sigma,R,H \land const(p_i),P)^\bot_Q & \rightarrow (\Sigma,R,H^\bot_{Q},P) \\
+		& \mbox{if } \exists Q' \in nested^+(Q), (H\land const(p_i)) \in nested(Q'), p_i \in \bot^T_{Q'} \\
+		& \mbox{if } \exists Q' \in nested^-(Q), (H\land const(p_i)) \in nested(Q'), p_i \in \bot^F_{Q'} \
 	\end{align*}
 \end{mydef}
 
 
 
 \begin{myprop}
-	$$Eval_{SQL}(Q,D) = Eval_{SQL}(Q^\bot_Q,D)$$
+	$$\forall Q \in \llbracket SQL \rrbracket_\bot Eval_{SQL}(Q,D) = Eval_{SQL}(Q^\bot_Q,D)$$
 \end{myprop}
 
 \begin{proof}
@@ -106,7 +136,16 @@ The translation $Q \rightarrow Q^+$ has an heavy cost has explained in the paper
 		\begin{align*}
 			(\Sigma,R,H \lor null(r_i.a_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
 			& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^T_{Q'} \\
-			& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'}
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'} \\
+			(\Sigma,R,H \lor null(p_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
+			& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(p_i)) \in nested(Q'), p_i \in \bot^T_{Q'} \\
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(p_i)) \in nested(Q'), p_i \in \bot^F_{Q'} \\
+			(\Sigma,R,H \land const(r_i.a_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
+			& \mbox{if } \exists Q' \in nested^-(Q), (H\land const(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^T_{Q'} \\
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\land const(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'} \\
+			(\Sigma,R,H \land const(p_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
+			& \mbox{if } \exists Q' \in nested^-(Q), (H\land const(p_i)) \in nested(Q'), p_i \in \bot^T_{Q'} \\
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\land const(p_i)) \in nested(Q'), p_i \in \bot^F_{Q'} \\
 		\end{align*}
 	\end{mydef}
 	
@@ -123,13 +162,10 @@ The translation $Q \rightarrow Q^+$ has an heavy cost has explained in the paper
 		\\$H_1 \land H_2 \in nested^+(Q)$
 		\\$\exists r_i.a_i \in (\bot^T_{H_1} \setminus \bot^T_{H_2}) \land (H\lor null(r_i.a_i)\in nested(H_2)$
 		\\Then if $x[r_i.a_i] = \bot$, $Eval(H^T_{2,H_2},D,x)$ might be different from $Eval(H^T_{2,H_1\land H_2},D,x)$
+		\\ Done on paper have to wrote it.
 	\end{proof}
 	
 	
 \end{proof}
 
-\begin{myprop}
-	
-\end{myprop}
 
-\section{Moving up null check}

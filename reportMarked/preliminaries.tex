@@ -6,24 +6,23 @@ To do : A lot :)
 \section{Preliminaries}
 
 \begin{mydef}
-	We denote the Set of well formed select query without agregation, full join and null test by $\llbracket SQL\rrbracket$
-	\\We denote the Set of well formed select query without agregation and full join by $\llbracket SQL\rrbracket _\bot$
+	We denote the Set of well formed select query without agregation, outer join and null test by $\llbracket SQL\rrbracket$
+	\\We denote the Set of well formed select query without agregation and outer join by $\llbracket SQL\rrbracket _\bot$
 \end{mydef}
 
 \begin{mydef}
 Let's a Select query $Q \in \llbracket SQL\rrbracket$ a tuple $(\Sigma,R,H,P)$ such that
 \begin{align*}
-\Sigma & \subseteq \{r_i.a_i | \exists r_i \in R \land \exists a_i \in r_i \} \\
-P & \subseteq \{p_i = r_j.a_j | r_j \notin R\} \mbox{ a set of external parameter.}\\
+\Sigma & \subseteq \{r_i.a_j | \exists r_i \in R \land \exists a_j \in r_i \} \\
+P & \subseteq \{p_i = r_j.a_k | r_j \notin R\} \mbox{ a set of external parameter.}\\
 R & \mbox{ a set of relation.}\\
-H &  \mbox{ belongs to the following grammar}\\
+H &  \mbox{ belongs to the following grammar.}\\
 \end{align*}
 
 \begin{align*}
-H ::= &\ r_i.a_i = c_i \; |\; r_i.a_i \neq c_j \; |\; r_i.a_i = r_j.a_j \; |\;  r_i.a_i \neq r_j.a_j \;  |\; r_i.a_i = p_i\; |\; 
-\\ &  exists(Q) \; |\; notexists(Q) \; |\; in(r_i.a_i,Q) \; |\; notin(r_i.a_i,Q) \; |\; 
-\\ & H\land H \; |\; H \lor H 
-\\
+H ::= &\ r_i.a_j = c_k \; |\; r_i.a_j \neq c_k \; |\; r_i.a_j = r_k.a_l \; |\;  r_i.a_j \neq r_k.a_l \;  |\; r_i.a_j = p_k\; |\; r_i.a_j \neq p_k\; |\; 
+\\ & r_i.a_j > c_k \; |\; r_i.a_j < c_k \; |\; r_i.a_j > r_k.a_l \; |\;  r_i.a_j < r_k.a_l \;  |\; r_i.a_j > p_k\; |\; r_i.a_j < p_k\; |\; 
+\\ &  exists(Q) \; |\; notexists(Q) \; |\;  H\land H \; |\; H \lor H 
 \end{align*}
 
 \end{mydef}
@@ -31,17 +30,17 @@ H ::= &\ r_i.a_i = c_i \; |\; r_i.a_i \neq c_j \; |\; r_i.a_i = r_j.a_j \; |\;  
 \begin{mydef}
 Let's a Select query $Q \in \llbracket SQL\rrbracket _\bot$ a tuple $(\Sigma,R,H,P)$ such that
 \begin{align*}
-\Sigma & \subseteq \{r_i.a_i | \exists r_i \in R \land \exists a_i \in r_i \} \\
-P & \subseteq \{p_i = r_j.a_j | r_j \notin R\} \mbox{ a set of external parameter.}\\
+\Sigma & \subseteq \{r_i.a_j | \exists r_i \in R \land \exists a_j \in r_i \} \\
+P & \subseteq \{p_i = r_j.a_k | r_j \notin R\} \mbox{ a set of external parameter.}\\
 R & \mbox{ a set of relation.}\\
-H_\bot &  \mbox{ belongs to the following grammar}\\
+H &  \mbox{ belongs to the following grammar.}\\
 \end{align*}
 
 \begin{align*}
-H_{\bot} ::= &\ r_i.a_i = c_i \; |\; r_i.a_i \neq c_j \; |\; r_i.a_i = r_j.a_j \; |\;  r_i.a_i \neq r_j.a_j \; |
-\\&  r_i.a_i = p_i\; |\; null(r_i.a_i) \; |\;  const(r_i.a_i)\;
-\\ &  exists(Q_{\bot}) \; |\; notexists(Q_{\bot}) \; |\; in(r_i.a_i,Q_{\bot}) \; |\; notin(r_i.a_i,Q_{\bot}) \; |\; 
-\\ & H_{\bot}\land H_{\bot} \; |\; H_{\bot} \lor H_{\bot} 
+	H ::= &\ r_i.a_j = c_k \; |\; r_i.a_j \neq c_k \; |\; r_i.a_j = r_k.a_l \; |\;  r_i.a_j \neq r_k.a_l \;  |\; r_i.a_j = p_k\; |\; r_i.a_j \neq p_k\; |\; 
+	\\ & r_i.a_j > c_k \; |\; r_i.a_j < c_k \; |\; r_i.a_j > r_k.a_l \; |\;  r_i.a_j < r_k.a_l \;  |\; r_i.a_j > p_k\; |\; r_i.a_j < p_k\; |\;
+	\\ & null(r_i.a_j) \; |\; const(r_i.a_j) \; |\; null(p_i) \; |\;  const(p_i) \;  |\; 
+	\\ &  exists(Q) \; |\; notexists(Q) \; |\;  H\land H \; |\; H \lor H 
 \end{align*}
 
 \end{mydef}
