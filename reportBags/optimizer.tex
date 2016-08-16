@@ -1,0 +1,37 @@
+\section{Optimizer}
+
+We can read in postgres source code : "We stop as soon as we hit a non-AND item." Indeed whenever postgres try to optimize join thanks to index or hash function it stop when a disjunction appears.
+Moreover as seen in previous section our translation involve adding disjunction in sub-queries, meaning the optimizer will choose to do a nested-loop in order to compute the answer, resulting in a blow up in time.
+In order to keep the computation time reasonable we offer an rewritting of the query which might seem counter-intuitive but allow the optimizer to use hash and index in order to perform join.
+
+First of all please notice that the only disjunction that might appear in our rewriting are of the form of $r_i.a = r_j.b \lor null(r_i.a) \lor null(r_j.b)$ then we will focus on the case even if most of the optimization might be applicable in more general case (ie. if the null check doesn't concern the same attribute then we have to care when performing $UNION ALL$, if the first literal of the disjunction isn't an equality optimization is useless because the optimizer won't be able to do a hash or index join.)
+Moreover if the primary query already contain disjunction we won't optimize it then we can consider that our query after translation is in CNF.  
+
+\subsection{Compute possible answer}
+\begin{myprop}
+	$$Eval_{SQL}(\Sigma,R,(r_1.a = c \lor null(r_1.a))\land H,P) =  Eval_{SQL}(\Sigma,(R\setminus \{r_1\}) \cup \{r_1^\lor\},H,P)$$
+	$$r_1^\lor = Eval_{SQL}(*,\{r1\},r_1.a = c \lor null(r_1.a),\emptyset )$$
+\end{myprop}
+\begin{proof}
+	$Q = (\Sigma,R(,r_1.a = c \lor null(r_1.a))\land H,P) $
+	\begin{align*}
+		x \in^n Eval_{SQL}(Q*,D) & \Leftrightarrow x \in^n Eval_{SQL}(*,R,r_1.a=c \lor null(r_1.a),P)\cap Eval_{SQL}(*,R,H,P)\\
+		& \Leftrightarrow x \in^n Eval_{SQL}(*,R,r_1.a=c \lor null(r_1.a),P) \land x \in^n Eval_{SQL}(*,R,H,P)\\
+		& \Leftrightarrow R^\times(x) \geq n \land (x[r_1.a] = c \lor x[r_1.a] = \bot) \land  x \in^n Eval_{SQL}(*,R,H,P)\\
+		& ...
+		\end{align*}
+\end{proof}
+
+\begin{myprop}
+	$$Eval_{SQL}(\Sigma,R,((r_1.a = r_2.b \lor null(r_1.a) \lor null(r_2.b))\land H,P) =  Eval_{SQL}(\Sigma,(R\setminus \{r_1,r_2\}) \cup \{r_{1\lor 2}\},H,P)$$
+	$$r_{1\lor 2} = Eval_{SQL}(*,\{r_1,r_2\},r_1.a = r_2.b,P) \uplus Eval_{SQL}(*,\{r_1,r_2^+\},null(r_1.a),P) \uplus Eval_{SQL}(*,\{r_1,r_2\},null(r_2.b),P)$$
+	$$r_2^+ = Eval{SQL}(*,\{r_2\},const(r_2.b),H,P)$$
+\end{myprop}
+
+\subsection{Compute certain answer}
+
+In order to compute certain answer we do not necessarily have to compute possible answer, indeed we only have to compute a set representing the possible answer which interest us.
+
+\begin{myprop}
+	$$ (\Sigma,R,notexists((*,R',H\land(r_1.a = r_2.b \lor null(r_1.a)),P')),P) =  (\Sigma,R,notexists((*,R',H\land r_1.a = r_2.b,P')) \land notexists((*,R',H\land null(r_1.a),P') \land exists(r_1),P)$$
+\end{myprop} 

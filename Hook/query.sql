@@ -198,7 +198,7 @@ WITH lp as ((SELECT * FROM (SELECT * FROM lineitem WHERE l_partkey IS NOT NULL) 
 
 
 
-SELECT o_orderkey
+SELECT count(o_orderkey)
 FROM orders
 WHERE NOT EXISTS(
   SELECT *
@@ -215,7 +215,7 @@ WHERE NOT EXISTS(
 
 
 
-SELECT o_orderkey
+SELECT count(o_orderkey)
 FROM orders
 WHERE NOT EXISTS(
   SELECT *
@@ -224,9 +224,20 @@ WHERE NOT EXISTS(
   AND (l_partkey = p_partkey OR l_partkey IS NULL)
   AND (l_suppkey = s_suppkey OR l_suppkey IS NULL)
   AND (s_nationkey = n_nationkey OR s_nationkey IS NULL)
-  AND (p_name LIKE '%'$color'%' OR p_name IS NULL)
-  AND n_name = '$nation'
+  AND (p_name LIKE '%floral%' OR p_name IS NULL)
+  AND n_name = 'FRANCE'
 );
+
+SELECT *
+FROM nation
+WHERE NOT EXISTS(
+  SELECT * FROM supplier,lineitem,part,orders
+  WHERE (s_nationkey = n_nationkey OR s_nationkey IS NULL)
+  AND (s_suppkey = l_suppkey OR l_suppkey IS NULL)
+  AND (l_partkey = p_partkey OR l_partkey IS NULL)
+  AND (l_orderkey = o_orderkey)
+)
+AND n_name = 'FRANCE';
 
 SELECT o_orderkey
 FROM orders

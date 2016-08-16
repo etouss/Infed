@@ -1,6 +1,11 @@
 \section{Semantics}
 
 \begin{mydef}
+	Let $Q$ be a query $(\Sigma,R,H,P)$ then $R^\times$ denotethe bag coming from the carthesian product or $R$.
+	$$R^\times = \prod_{r \in R}{r}$$
+\end{mydef}
+
+\begin{mydef}
 $$ \sigma_{\Sigma}(x) = (x[r_i.a_i] | r_i.a_i \in \Sigma) $$
 $$ \sigma_{*}(x) = x $$
 \end{mydef}
@@ -13,17 +18,17 @@ $$ \sigma_{*}(x) = x $$
 \begin{align*}
 	Eval_{SQL}((\Sigma,R,H_1\land H_2,P),D) & = \sigma_{\Sigma}(Eval_{SQL}((*,R,H_1,P),D) \cap Eval_{SQL}((*,R,H_2,P),D)) \\
 	Eval_{SQL}((\Sigma,R,H_1\lor H_2,P),D) & =  \sigma_{\Sigma}(Eval_{SQL}((*,R,H_1,P),D) \cup Eval_{SQL}((*,R,H_2,P),D)) \\
-	Eval_{SQL}((\Sigma,R,null(r_i.a_i),P),D) & =\sigma_\Sigma(\llbracket x^n | R(x) = n \land x[r_i.a_i] = \bot  \rrbracket)\\
-	Eval_{SQL}((\Sigma,R,const(r_i.a_i),P),D) & = \sigma_\Sigma(\llbracket x^n | R(x) = n \land x[r_i.a_i] \neq \bot  \rrbracket) \\
-	Eval_{SQL}((\Sigma,R,r_i.a_i = c_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R(x) = n \land x[r_i.a_i] = c_i \rrbracket)\\
-	Eval_{SQL}((\Sigma,R,r_i.a_i = r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] = x[r_j.a_j] \land x[r_i.a_i] \neq \bot \land x[r_j.a_j] \neq \bot  \rrbracket)\\
-	Eval_{SQL}((\Sigma,R,r_i.a_i = p_i,P),D) & = \sigma_\Sigma( \llbracket  x^n  | R(x) = n \land x[r_i.a_i] = P[p_i]  \land x[r_i.a_i] \neq \bot \land P[p_i] \neq \bot \rrbracket )\\
-	Eval_{SQL}((\Sigma,R,r_i.a_i \neq c_i,P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] \neq c_i \land x[r_i.a_i] \neq \bot  \rrbracket )\\
-	Eval_{SQL}((\Sigma,R,r_i.a_i \neq r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R(x) = n \land x[r_i.a_i] \neq x[r_j.a_j] \land x[r_i.a_i] \neq \bot \land x[r_j.a_j] \neq \bot  \rrbracket)\\
-	Eval_{SQL}((\Sigma,R,r_i.a_i \neq p_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R(x) = n \land x[r_i.a_i] \neq P[p_i] \land x[r_i.a_i] \neq \bot \land P[p_i] \neq \bot \rrbracket)\\
-	Eval_{SQL}((\Sigma,R,exists(Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \land Eval_{SQL}(Q[x],D) \neq \emptyset \rrbracket)\\
-	Eval_{SQL}((\Sigma,R,notexists(Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \land Eval_{SQL}(Q[x],D) = \emptyset \rrbracket)\\
-	Eval_{SQL}((\Sigma,R,in(\Sigma_1,Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \\ 
+	Eval_{SQL}((\Sigma,R,null(r_i.a_i),P),D) & =\sigma_\Sigma(\llbracket x^n | R^\times(x) = n \land x[r_i.a_i] = \bot  \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,const(r_i.a_i),P),D) & = \sigma_\Sigma(\llbracket x^n | R^\times(x) = n \land x[r_i.a_i] \neq \bot  \rrbracket) \\
+	Eval_{SQL}((\Sigma,R,r_i.a_i = c_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R^\times(x) = n \land x[r_i.a_i] = c_i \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i = r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land x[r_i.a_i] = x[r_j.a_j] \land x[r_i.a_i] \neq \bot \land x[r_j.a_j] \neq \bot  \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i = p_i,P),D) & = \sigma_\Sigma( \llbracket  x^n  | R^\times(x) = n \land x[r_i.a_i] = P[p_i]  \land x[r_i.a_i] \neq \bot \land P[p_i] \neq \bot \rrbracket )\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i \neq c_i,P),D) & =  \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land x[r_i.a_i] \neq c_i \land x[r_i.a_i] \neq \bot  \rrbracket )\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i \neq r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land x[r_i.a_i] \neq x[r_j.a_j] \land x[r_i.a_i] \neq \bot \land x[r_j.a_j] \neq \bot  \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,r_i.a_i \neq p_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R^\times(x) = n \land x[r_i.a_i] \neq P[p_i] \land x[r_i.a_i] \neq \bot \land P[p_i] \neq \bot \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,exists(Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land Eval_{SQL}(Q[x],D) \neq \emptyset \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,notexists(Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land Eval_{SQL}(Q[x],D) = \emptyset \rrbracket)\\
+	Eval_{SQL}((\Sigma,R,in(\Sigma_1,Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \\ 
 	& \; \; \; \; \; \; \; \; \; \; \; \; \land \forall y \in Eval_{SQL}(Q,D),\forall i \in \llbracket 1 ; |\Sigma_1| \rrbracket,  \sigma_{\Sigma_1}(x)[i] = y[i] \\ 
 	& \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \; \land \sigma_{\Sigma_1}(x)[i] \neq \bot \land y[i] \neq \bot  \rrbracket)\\
 	Eval_{SQL}((\Sigma,R,notin(\Sigma_1,Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R(x) = n \\ 

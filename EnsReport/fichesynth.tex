@@ -1,0 +1,84 @@
+
+\documentclass{article}
+
+\usepackage[english]{babel} %
+\usepackage[T1]{fontenc} %
+\usepackage[latin1]{inputenc} %
+\usepackage{a4wide} %
+\usepackage{palatino} %
+
+\let\bfseriesbis=\bfseries \def\bfseries{\sffamily\bfseriesbis}
+
+
+\newenvironment{point}[1]%
+{\subsection*{#1}}%
+{}
+
+\setlength{\parskip}{0.3\baselineskip}
+
+\begin{document}
+
+\title{SQL Query evaluation on Incomplete Databases with correctness guarantees }
+
+\author{Etienne Toussaint, Leonid Libkin \\
+	Laboratory for Foundations of Computer Science, The University of Edinburgh }
+
+\date{21st August 2016}
+
+\maketitle
+
+\pagestyle{empty} %
+\thispagestyle{empty}
+
+%% Attention: pas plus d'un recto-verso!
+
+
+\begin{point}{The general context}
+  Due to the increase of data, the growing variety of tools used to manage them, there are more databases that are incomplete.  Handling incomplete information is one of the oldest topics in database research, the standard way of answering queries on incomplete databases is to compute certain answer:  those that do not depend on the interpretation of unknown data. Computing certain answers is coNP-hard for most reasonable semantics, however 
+  it is not yet a reason for undesirable behavior. Indeed one could expect from an evaluation over incomplete databases to either miss some certain answers, or returning some that are not, but not both at the same time. 
+  The problem with SQL is that it produces both kinds of errors as it have been shown recently in . They also offer a translation on relational algebra in order to ensure that only one kind of error are produce.
+
+\end{point}
+
+\begin{point}{The research problem}
+	
+ The translation on relational algebra in order to have correctness guarantee has proven to be efficient, however DBMS do not translate queries in relational algebra. Moreover relational algebra is based on sets semantic while SQL databases are based on bags. The question that naturally arises is can we find a direct translation from SQL to SQL which ensure correctness regarding bags semantic.
+ 
+ The aim of my internship is to propose a direct translation as efficient as possible which has correctness guarantee, and implement it.  
+
+\end{point}
+
+\begin{point}{Your contribution}
+
+The main idea is that order to compute a strict subset of certain answers, we also compute an over-approximation of those certain-answer due to the presence of negation in the queries. However computing such a set can be really expensive, so i tried to avoid it as much as possible and to make it fast when we had to compute it.
+
+The contributions of my internship are the following: a semantic of SQL evaluation (section 2); the actual SQL to SQL translation (section 3); methods to help the planner while computing disjunctive queries answers (section 5); a Postgres extension implementing the translation. 
+\end{point}
+
+\begin{point}{Arguments supporting its validity}
+ 
+  The translation is proven to have correctness guarantee on a semantic of SQL evaluation, however such semantic has to be prove right (Code analysis due to lack of literature). Indeed work have to be done to .... however we did not find a counter example.
+  
+  Benchmarks show that the various methods propose increase performances, and it's proven that those transformation does not change answers. Many of the methods can be applied to optimize more general query with only a few precautions.
+  
+  The translation will lead to a true professional implementation by ... in  customize Postgres distributions.
+\end{point}
+
+
+\begin{point}{Summary and future work}
+  
+ During my internship, i have proposed a direct translation from SQL to SQL with correctness guarantee, and i was able to implement a proof concept. More fundamental efforts to improve direct SQL translation will be to formalize SQL evaluation semantic. On a practical point of view, the way Postgres (or any other DBMS) compute disjunctive queries should be improve directly in the software (Hash Join with disjunction), and work should be done to ensure that the translated query behave well with parallelizationn.
+  A very interesting ?next question? 
+
+\end{point}
+
+\begin{point}{Notes and Acknowledgements}
+\end{point}
+
+
+\end{document}
+
+
+
+
+
