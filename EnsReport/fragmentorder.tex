@@ -1,0 +1,210 @@
+\section{Removing redundant null check}
+\label{redun}
+The evaluation of a query $Q^+$ which come from our translation may have a huge cost, as most DBMS such as Postgres do not behave well with disjunction. 
+In our translation we introduce disjunctions however some of them might be redundant.
+
+\begin{mydef}
+For each Query and nested Query we maintain a set of attributes that have to be not null in order for the query to be true resp. false we denote this set $\bot^T_{Q}$ resp.$\bot^F_{Q}$ without taking null check in account.
+	$$x \in Eval_{SQL}(Q_*,D)  \Rightarrow \forall r_i.a_i \in \bot^T_Q, x[r_i.a_i] \neq \bot$$
+	$$x \notin Eval_{SQL}(Q_*,D)  \Rightarrow \forall r_i.a_i \in \bot^F_Q, x[r_i.a_i] \neq \bot$$
+(see appendix for a proper inductive definition, which show how to compute those).
+\end{mydef} 
+
+\begin{mydef}
+For a query $Q$ we also compute the set of constraint which have to be true resp.false , in order for the tuples to be returned. We denote this set $nested^+(Q)$ resp. $nested^-(Q)$.
+	$$x \in Eval_{SQL}(Q,D)  \Rightarrow \forall c \in nested^+(Q), x \vdash c$$
+	$$x \in Eval_{SQL}(Q,D)  \Rightarrow \forall c \in nested^-(Q), x \vdash \neg c$$
+(see appendix for a proper inductive definition, which show how to compute those).
+\end{mydef}
+
+
+\iffalse
+%Contraintes montantes
+\begin{mydef}
+	\begin{align*}
+		\bot^T_{(\Sigma,R,H_1 \land H_2,P)} & = \bot^T_{(\Sigma,R,H_1,P)} \cup \bot^T_{(\Sigma,R,H_2,P)} \\
+		\bot^T_{(\Sigma,R,H_1 \lor H_2,P)} & = \bot^T_{(\Sigma,R,H_1,P)} \cap \bot^T_{(\Sigma,R,H_2,P)} \\
+		\bot^T_{(\Sigma,R,r_i.a_i = c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i \neq c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i > c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i < c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i = r_j.a_j,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i \neq r_j.a_j,P)} & = \{r_i.a_i,r_j.a_j\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i > r_j.a_j,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i < r_j.a_j,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i = p_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i \neq p_i,P)} & = \{r_i.a_i,p_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i > p_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i < p_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,exists(Q),P)} & = \bot^T_{Q[?]} \\
+		\bot^T_{(\Sigma,R,notexists(Q),P)} & = \bot^F_{Q[?]}\\
+	\end{align*}
+	
+	\begin{align*}
+		\bot^F_{(\Sigma,R,H_1 \land H_2,P)} & = \bot^F_{(\Sigma,R,H_1,P)} \cap \bot^F_{(\Sigma,R,H_2,P)} \\
+		\bot^F_{(\Sigma,R,H_1 \lor H_2,P)} & = \bot^F_{(\Sigma,R,H_1,P)} \cup \bot^F_{(\Sigma,R,H_2,P)} \\
+		\bot^F_{(\Sigma,R,r_i.a_i = c_i,P)} & =\emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i \neq c_i,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i > c_i,P)} & =\emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i < c_i,P)} & =\emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i = r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i \neq r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i > r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i < r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i = p_i,P)} & = \emptyset\\
+		\bot^F_{(\Sigma,R,r_i.a_i \neq p_i,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i > p_i,P)} & = \emptyset\\
+		\bot^F_{(\Sigma,R,r_i.a_i < p_i,P)} & = \emptyset\\
+		\bot^F_{(\Sigma,R,exists(Q),P)} & = \bot^F_{Q[?]} \\
+		\bot^F_{(\Sigma,R,notexists(Q),P)} & = \bot^T_{Q[?]}\\
+	\end{align*}
+\end{mydef}
+\fi
+
+
+\iffalse
+
+\begin{mydef}
+	
+	\begin{align*}
+		nested^+(H_1\land H_2) & = \{H_1 \land H_2\}  \cup nested^+(H_1) \cup nested^+(H_2) \\
+		nested^+(H_1\lor H_2) & = \{H_1 \lor H_2\}  \cup nested^+(H_1) \cup nested^+(H_2) \\
+		nested^+(r_i.a_i = c_i) & = \{r_i.a_i = c_i\} \\
+		nested^+(r_i.a_i \neq c_i) & = \{r_i.a_i \neq c_i\} \\
+		nested^+(r_i.a_i > c_i) & = \{r_i.a_i > c_i\} \\
+		nested^+(r_i.a_i < c_i) & = \{r_i.a_i < c_i\} \\
+		nested^+(r_i.a_i = r_j.a_j) & = \{r_i.a_i = r_j.a_j\} \\
+		nested^+(r_i.a_i \neq r_j.a_j) & = \{r_i.a_i \neq r_j.a_j\} \\
+		nested^+(r_i.a_i > r_j.a_j) & = \{r_i.a_i > r_j.a_j\} \\
+		nested^+(r_i.a_i < r_j.a_j) & = \{r_i.a_i < r_j.a_j\} \\
+		nested^+(r_i.a_i = p_j) & = \{r_i.a_i = p_j\} \\
+		nested^+(r_i.a_i \neq p_j) & = \{r_i.a_i \neq p_j\} \\
+		nested^+(r_i.a_i > p_j) & = \{r_i.a_i > p_j\} \\
+		nested^+(r_i.a_i < p_j) & = \{r_i.a_i < p_j\} \\
+		nested^+(exists(Q)) & = \{exists(Q)\} \cup nested^+(Q) \\
+		nested^+(notexists(Q)) & = \{notexists(Q)\} \cup nested^-(Q) \\
+	\end{align*}
+	
+	\begin{align*}
+		nested^-(H_1\land H_2) & =nested^-(H_1) \cup nested^-(H_2) \\
+		nested^-(H_1\lor H_2) & =  nested^-(H_1) \cup nested^-(H_2) \\
+		nested^-(r_i.a_i = c_i) & = \emptyset \\
+		nested^-(r_i.a_i \neq c_i) & = \emptyset \\
+		nested^-(r_i.a_i > c_i) & = \emptyset \\
+		nested^-(r_i.a_i < c_i) & = \emptyset \\
+		nested^-(r_i.a_i = r_j.a_j) & = \emptyset \\
+		nested^-(r_i.a_i \neq r_j.a_j) & = \emptyset \\
+		nested^-(r_i.a_i > r_j.a_j) & = \emptyset \\
+		nested^-(r_i.a_i < r_j.a_j) & = \emptyset \\
+		nested^-(r_i.a_i = p_j) & = \emptyset \\
+		nested^-(r_i.a_i \neq p_j) & = \emptyset \\
+		nested^-(r_i.a_i > p_j) & = \emptyset \\
+		nested^-(r_i.a_i < p_j) & = \emptyset \\
+		nested^-(exists(Q)) & =nested^-(Q) \\
+		nested^-(notexists(Q)) & = nested^+(Q) \\
+	\end{align*}
+
+	
+	\begin{align*}
+		nested(Q) & = nested^-(Q) \cup nested^+(Q)
+	\end{align*}
+\end{mydef}
+\fi
+
+Now we can offer a translation $Q \rightarrow Q^\bot _Q$
+\iffalse
+\begin{figure}[H]
+	\caption{\label{qq} Translatation $Q \rightarrow Q^\bot _Q$ }
+	\begin{align*}
+		notexists(Q')^\bot_Q & \rightarrow notexists(Q'^\bot_Q)
+		\\exists(Q')^\bot_Q & \rightarrow exists(Q'^\bot_Q)
+	\end{align*}
+\end{figure}
+\fi
+
+\begin{figure}[H]
+	\caption{\label{hq} Translatation $(H,Q) \rightarrow H^\bot _Q$ }
+	\begin{mdframed}
+		\fontsize{8}{6}
+	\begin{align*}
+		(\Sigma,R,H \lor null(r_i.a_i),P)^\bot_Q & \rightarrow (\Sigma,R,H^\bot_{Q},P) \\
+		& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^T_{Q'} \\
+		& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'} \\
+		(\Sigma,R,H \lor null(p_i),P)^\bot_Q & \rightarrow (\Sigma,R,H^\bot_{Q},P) \\
+		& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(p_i)) \in nested(Q'), p_i \in \bot^T_{Q'} \\
+		& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(p_i)) \in nested(Q'), p_i \in \bot^F_{Q'} \\
+		(\Sigma,R,H \land const(r_i.a_i),P)^\bot_Q & \rightarrow (\Sigma,R,H^\bot_{Q},P) \\
+		& \mbox{if } \exists Q' \in nested^+(Q), (H\land const(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^T_{Q'} \\
+		& \mbox{if } \exists Q' \in nested^-(Q), (H\land const(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'} \\
+		(\Sigma,R,H \land const(p_i),P)^\bot_Q & \rightarrow (\Sigma,R,H^\bot_{Q},P) \\
+		& \mbox{if } \exists Q' \in nested^+(Q), (H\land const(p_i)) \in nested(Q'), p_i \in \bot^T_{Q'} \\
+		& \mbox{if } \exists Q' \in nested^-(Q), (H\land const(p_i)) \in nested(Q'), p_i \in \bot^F_{Q'} \
+	\end{align*}
+	\end{mdframed}
+\end{figure}
+
+
+To give an intuition to understand why such translation preserve the evaluation, one have to understand that in order for a tuple to be return each sub-conditions have to be fulfill. Then if some part of the query require an attribute to be a constant, we know that this attribute can not be null in the whole query. Then we are allowed to remove any null test as they can not be involved in the computation of a valid tuple.
+(Actually it is a bit more complicated due to the presence of disjunction but that's the main idea).
+
+\begin{myprop}
+	\label{prop3}
+	$$\forall Q \in \llbracket SQL \rrbracket_\bot Eval_{SQL}(Q,D) = Eval_{SQL}(Q^\bot_Q,D)$$
+\end{myprop}
+
+\begin{proof}
+	In order to prove the property we have to introduce an analogue query translation when we assume that the query is false. 
+	Such translations would verify:
+	\begin{mylem}
+		\label{lem2}
+		$$\forall Q, \forall Q' \in nested^-(Q), Eval(Q,D) = Eval(Q^{\bot^F}_{Q'},D)$$
+	\end{mylem}
+	\begin{mylem}
+		\label{lem3}
+		$$\forall Q, \forall Q' \in nested^+(Q), Eval(Q,D) = Eval(Q^\bot_{Q'},D)$$
+	\end{mylem}
+	Then we can prove inductively that assuming \ref{lem2}, \ref{lem3} holds and assuming \ref{lem3}, \ref{lem2} holds.
+	(see appendix for a proper inductive definitions,and a full proof).
+	Then as prop \ref{prop3} is only a restriction of lemma \ref{lem2} it also holds.
+\end{proof}
+
+
+\iffalse 
+\begin{proof}
+	
+	\begin{mydef}
+		\begin{align*}
+			(\Sigma,R,H \lor null(r_i.a_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
+			& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^T_{Q'} \\
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'} \\
+			(\Sigma,R,H \lor null(p_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
+			& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(p_i)) \in nested(Q'), p_i \in \bot^T_{Q'} \\
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(p_i)) \in nested(Q'), p_i \in \bot^F_{Q'} \\
+			(\Sigma,R,H \land const(r_i.a_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
+			& \mbox{if } \exists Q' \in nested^-(Q), (H\land const(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^T_{Q'} \\
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\land const(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'} \\
+			(\Sigma,R,H \land const(p_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
+			& \mbox{if } \exists Q' \in nested^-(Q), (H\land const(p_i)) \in nested(Q'), p_i \in \bot^T_{Q'} \\
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\land const(p_i)) \in nested(Q'), p_i \in \bot^F_{Q'} \\
+		\end{align*}
+	\end{mydef}
+	
+	\begin{myprop}
+		$$\forall Q' \in nested^+(Q), Eval(Q,D) = Eval(Q^\bot_{Q'},D)$$
+	\end{myprop}
+	\begin{myprop}
+		$$\forall Q' \in nested^-(Q), Eval(Q,D) = Eval(Q^{\bot^F}_{Q'},D)$$
+	\end{myprop}
+	
+	\begin{proof}
+		Assume (10).
+		\\By Induction ...
+		\\$H_1 \land H_2 \in nested^+(Q)$
+		\\$\exists r_i.a_i \in (\bot^T_{H_1} \setminus \bot^T_{H_2}) \land (H\lor null(r_i.a_i)\in nested(H_2)$
+		\\Then if $x[r_i.a_i] = \bot$, $Eval(H^T_{2,H_2},D,x)$ might be different from $Eval(H^T_{2,H_1\land H_2},D,x)$
+		\\ Done on paper have to wrote it.
+	\end{proof}
+\end{proof}
+\fi
+
+This rewriting has prove to be efficient, as it reduce the number of disjunction is the query moreover it allow us to take care of SQL constraint such as NOT NULL attributes, indeed if we add those attributes to $\bot^T_Q$ every null check on those attributes will be remove.

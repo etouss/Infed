@@ -1,7 +1,7 @@
 # contrib/only_encrypted_passwords/Makefile
 
 MODULE_big = certain_answer_marked
-OBJS = certain_answer_marked.o true_var.o
+OBJS = certain_answer_marked.o true_var.o self_optimize.o split_optimize.o exist_optimize.o
 
 ifdef USE_PGXS
 PG_CONFIG = pg_config

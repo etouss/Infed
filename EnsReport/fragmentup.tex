@@ -1,0 +1,71 @@
+\section{Moving around null check}
+Not implement in the soft, i had forget about that, i will check if i keep it or not.
+Seems redondant but i will run some tests.
+
+I have to explain the difference between those two parts ie. considering the null check when building the set or not.
+
+\begin{mydef}
+For each Query and nested Query we maintain a set of attribute that have to be not null in order for the query to be true resp. false we denote this set $\bot^T_{Q}$ resp.$\bot^F_{Q}$.
+\end{mydef}
+
+\begin{mydef}
+	\begin{align*}
+		\bot^T_{(\Sigma,R,H_1 \land H_2,P)} & = \bot^T_{(\Sigma,R,H_1,P)} \cup \bot^T_{(\Sigma,R,H_2,P)} \\
+		\bot^T_{(\Sigma,R,H_1 \lor H_2,P)} & = \bot^T_{(\Sigma,R,H_1,P)} \cap \bot^T_{(\Sigma,R,H_2,P)} \\
+		\bot^T_{(\Sigma,R,r_i.a_i = c_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i \neq c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i > c_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i < c_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i = r_j.a_j,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i \neq r_j.a_j,P)} & = \{r_i.a_i,r_j.a_j\}\\
+		\bot^T_{(\Sigma,R,r_i.a_i > r_j.a_j,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i < r_j.a_j,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i = p_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i \neq p_i,P)} & = \{r_i.a_i,p_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i > p_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i < p_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,const(r_i.a_i),P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,const(p_i),P)} & = \{p_i\} \\
+		\bot^T_{(\Sigma,R,null(r_i.a_i),P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,null(p_i),P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,exists(Q),P)} & = \bot^T_{Q[?]} \\
+		\bot^T_{(\Sigma,R,notexists(Q),P)} & = \bot^F_{Q[?]}\\
+	\end{align*}
+	
+	\begin{align*}
+		\bot^F_{(\Sigma,R,H_1 \land H_2,P)} & = \bot^F_{(\Sigma,R,H_1,P)} \cap \bot^F_{(\Sigma,R,H_2,P)} \\
+		\bot^F_{(\Sigma,R,H_1 \lor H_2,P)} & = \bot^F_{(\Sigma,R,H_1,P)} \cup \bot^F_{(\Sigma,R,H_2,P)} \\
+		\bot^F_{(\Sigma,R,r_i.a_i = c_i,P)} & =\emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i \neq c_i,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i > c_i,P)} & =\emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i < c_i,P)} & =\emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i = r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i \neq r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i > r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i < r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i = p_i,P)} & = \emptyset\\
+		\bot^F_{(\Sigma,R,r_i.a_i \neq p_i,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i > p_i,P)} & = \emptyset\\
+		\bot^F_{(\Sigma,R,r_i.a_i < p_i,P)} & = \emptyset\\
+		\bot^F_{(\Sigma,R,const(r_i.a_i),P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,const(p_i),P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,null(r_i.a_i),P)} & = \{r_i.a_i\} \\
+		\bot^F_{(\Sigma,R,null(p_i),P)} & = \{p_i\} \\
+		\bot^F_{(\Sigma,R,exists(Q),P)} & = \bot^F_{Q[?]} \\
+		\bot^F_{(\Sigma,R,notexists(Q),P)} & = \bot^T_{Q[?]}\\
+	\end{align*}
+\end{mydef}
+
+\begin{mydef}
+	\begin{align*}
+		(\Sigma,R,H,P)^{up} & \rightarrow (\Sigma,R,(H\setminus \{null(p_i)\}) \land const(p_i),P) \\
+		& \mbox{if } p_i \in \bot^T_{(\Sigma,R,H,P)}  \\
+		(\Sigma,R,H,P)^{up} & \rightarrow (\Sigma,R,(H\setminus \{null(r_i.a_i)\}) \land notexists((*,R,null(r_i.a_i),P)),P) \\
+		& \mbox{if } r_i.a_i \in \bot^T_{(\Sigma,R,H,P)}  \\
+	\end{align*}
+Not well written, actually false (notexists Query is different than that) but intuitive. 
+\end{mydef}
+
+\begin{myprop}
+	$$\forall Q \in \llbracket SQL \rrbracket_\bot Eval_{SQL}(Q,D) = Eval_{SQL}(Q^{up},D)$$
+\end{myprop}
