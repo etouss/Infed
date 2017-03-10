@@ -1,0 +1,22 @@
+\BOOKMARK [1][-]{section.1}{Preliminaries}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{SQL behavior}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Correctness}{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.3}{SQL Query syntax}{section.1}% 4
+\BOOKMARK [2][-]{subsection.1.4}{SQL Evaluation semantic}{section.1}% 5
+\BOOKMARK [1][-]{section.2}{Evaluation with correctness guarantee}{}% 6
+\BOOKMARK [1][-]{section.3}{Removing redundant null check}{}% 7
+\BOOKMARK [1][-]{section.4}{Query Optimization}{}% 8
+\BOOKMARK [2][-]{subsection.4.1}{SQL null}{section.4}% 9
+\BOOKMARK [2][-]{subsection.4.2}{Split the query}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.3}{Optimize FROM relations}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.4}{Improve computation}{section.4}% 12
+\BOOKMARK [1][-]{section.5}{Results}{}% 13
+\BOOKMARK [1][-]{appendix.A}{Appendix}{}% 14
+\BOOKMARK [2][-]{subsection.A.1}{Bags}{appendix.A}% 15
+\BOOKMARK [2][-]{subsection.A.2}{Inductive definition}{appendix.A}% 16
+\BOOKMARK [2][-]{subsection.A.3}{Proof of proposition 2}{appendix.A}% 17
+\BOOKMARK [2][-]{subsection.A.4}{Proof of proposition 4}{appendix.A}% 18
+\BOOKMARK [2][-]{subsection.A.5}{Proof of proposition 5}{appendix.A}% 19
+\BOOKMARK [2][-]{subsection.A.6}{Proof of proposition 6}{appendix.A}% 20
+\BOOKMARK [2][-]{subsection.A.7}{SQL nulls Translation}{appendix.A}% 21
+\BOOKMARK [2][-]{subsection.A.8}{Query rewriting step}{appendix.A}% 22

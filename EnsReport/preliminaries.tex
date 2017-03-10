@@ -1,0 +1,156 @@
+%!TEX root = main.tex
+
+%\section{Preliminaries}
+
+\iffalse
+\subsection{Bags}
+
+\begin{mydef}
+	We call a bag $B$ a function $D \rightarrow \NN$ such that $B(x)$ represents the multiplicity of $x$ in the bag $B$.  
+\end{mydef}
+
+\begin{mydef}
+	\begin{align*}
+		\forall x, \emptyset(x)  & = 0 \\
+		\forall x, (B_1 \cap B_2)(x)  & = min(B_1(x),B_2(x)) \\
+		\forall x, (B_1 \cup B_2)(x)  & = max(B_1(x),B_2(x)) \\
+		\forall x, (B_1 \uplus B_2)(x)  & = B_1(x) + B_2(x) \\
+		\forall x, (B_1 \setminus B_2)(x)  & = max(0,B_1(x) - B_2(x)) \\
+		\forall x, \llbracket a \rrbracket(x) & = \left\{\begin{array}{ll}
+			1 \mbox{ if } x = a \\
+			0 \mbox{ otherwise}
+		\end{array}\right. \\
+		\forall x, \llbracket a^n \rrbracket(x) & = \left\{\begin{array}{ll}
+			n \mbox{ if } x = a \\
+			0 \mbox{ otherwise}
+		\end{array}\right. \\
+		\forall x, \llbracket y^n | P(y,n) \rrbracket(x)  & = max(\{ i | P(x,i) \}) \\
+		x \in B & \iff B(x) \geq 1 \\
+		x \in^n B & \iff B(x) \geq n \\
+		x \notin B & \iff B(x) = 0 \\
+		B_1 = B_2 &  \iff \forall x, B_1(x) = B_2(x) \\
+		B_1 \subseteq B_2 &  \iff \forall x, B_1(x) \leq B_2(x) \\
+		\{B\}  & = \{x | B(x) \geq 1\} \\
+	\end{align*}
+\end{mydef}
+\fi
+
+\subsection{Correctness}
+
+In order to give a formal definition of correctness we need to give a few definitions. Much of the following is standard in the literature on databases with incomplete information, see, e.g., [\cite{abiteboul1995foundations}, \cite{van1998logical}, \cite{gheerbrant2014naive}, \cite{libkin2016sql}, \cite{imielinski1984incomplete}].
+We consider incomplete databases with nulls interpreted as missing information. 
+Databases are populated by two types of elements: constants and nulls, coming from countably infinite sets denoted by $Const$ and $Null$, respectively. Elements in $Null$ are denoted $\bot_t$, where $t$ is a stamp, and behave accordingly to the marked nulls semantics.
+We call a valuation of nulls on an incomplete database $D$ a map
+$v : Null(D) \rightarrow Const$ assigning a constant value to each null.
+According to this definition it's easy to understand that each element $\bot_t$ which might appears multiple times in the database will all be assign to the same constant by a valuation. 
+
+A typical definition of certain answers are those independent of the interpretation of missing information denoted $cert(Q,D) = \bigcap \{ Q(v(D)) | v \mbox{ is a valuation} \} $ where $Q$ is a query and $D$ a database. Such definition is a bit too restrictive as tuples with nulls can not be returned. A more general notion called certain answers with nulls, noted $cert_\bot(Q,D)$ is defined as : 
+$$cert_\bot(Q,D) = \llbracket a^n | \forall v, v(a) \in^n Q(v(D)) \rrbracket$$
+Those definition are closely related as if we remove tuples with null from $cert_\bot(Q,D)$ we obtain $cert(Q,D)$.
+
+We say that a query evaluation algorithm, $Eval$, has correctness guarantees for a query $Q$ if for every database $D$ it returns a subset of $cert_\bot(Q, D)$.
+
+We will focus on having an evaluation procedure for the basic fragment of SQL (i.e., first-order queries) which have correctness guarantee. Our evaluation algorithm will translate a query $Q$ in $Q'$ such that $$\forall D, \forall a , (a \in^n Eval_{SQL}(Q',D) \implies a \in^n cert_\bot(Q,D))$$. 
+
+\subsection{SQL Query syntax}
+\label{semantic}
+In this subsection we  introduce a syntax in order to describe the basic fragment of SQL. 
+Note that this is a personal choice as there is no real standard in the literature.   
+
+\begin{mydef}
+	We denote the set of well formed query without null test by $\llbracket SQL\rrbracket$
+	\\We denote the Set of well formed query by $\llbracket SQL\rrbracket _\bot$
+\end{mydef}
+
+\begin{mydef}
+	Let's a Select query $Q \in \llbracket SQL\rrbracket _\bot$ a tuple $(\Sigma,R,H,P)$ such that
+	\begin{align*}
+		\Sigma & \subseteq \{r_i.a_j | \exists r_i \in R \land \exists a_j \in r_i \} \\
+		P & \subseteq \{p_i = r_j.a_k | r_j \notin R\} \mbox{ a set of external parameter.}\\
+		R & \mbox{ a set of relation}\\
+		H &  \mbox{ belongs to the following grammar.}\\
+	\end{align*}
+	\begin{align*}
+		H ::= &\ r_i.a_j = c_k \; |\; r_i.a_j \neq c_k \; |\; r_i.a_j = r_k.a_l \; |\;  r_i.a_j \neq r_k.a_l \;  |\; r_i.a_j = p_k\; |\; r_i.a_j \neq p_k\; |\; 
+		\\ & r_i.a_j > c_k \; |\; r_i.a_j < c_k \; |\; r_i.a_j > r_k.a_l \; |\;  r_i.a_j < r_k.a_l \;  |\; r_i.a_j > p_k\; |\; r_i.a_j < p_k\; |\;
+		\\ & null(r_i.a_j) \; |\; const(r_i.a_j) \; |\; null(p_i) \; |\;  const(p_i) \;  |\; 
+		\\ &  exists(Q) \; |\; notexists(Q) \; |\;  H\land H \; |\; H \lor H 
+	\end{align*}
+	
+\end{mydef}
+
+The query in \ref{query} would be express as $$\left( ord\_id,Orders,notexists((*,Payments,Payments.ord\_id = Order.ord\_id,\emptyset )),\emptyset \right)$$
+
+\begin{mydef}
+	Let $x$ a labeled-tuple we denote by  $x[a]$ the value of the column labeled as $a$ in the tuple.
+	\\We denote $(\Sigma,R,H,P)[x]$ the query $(\Sigma,R,H,P\cup x)$.
+	\\We denote $(\Sigma,R,H,P)_*$ the query $(*,R,H,P)$.
+	$$ \sigma_{\Sigma}(x) = (x[r_i.a_i] | r_i.a_i \in \Sigma) $$
+	$$ \sigma_{*}(x) = x $$
+	$$ \sigma_{\Sigma}(B) = \llbracket y^n | n = \sum_{x \in \{ z | z \in \{B\} \land \sigma_{\Sigma}(z) = y \} } B(x) \rrbracket $$
+\end{mydef}
+
+\begin{mydef}
+	Let $R$ be a set of relations then $R^\times$ denote the bag coming from the cartesian product of $R$.
+	$$R^\times = \prod_{r \in R}{r}$$
+\end{mydef}
+
+\begin{myprop}
+	\label{prop1}
+	Let $R$ be a set of relation, and $z$ a tuple then:
+	$$(\forall v \mbox{ valuation}, v(R^\times)(v(z)) \geq k )\Leftrightarrow R^\times(z) \geq k  $$ 
+\end{myprop}
+This property is ensure due to the fact that a valuation $v$ have to evaluate every marked null with the same stamp by the same constant that may not already appear in the database. (Here we assume that each attribute as an infinite number of possible value). 
+The proof is straightforward but require a lot of notation, then it won't appear in this report.
+However this  property does not hold for SQL nulls, which is one of the reason we choose to work with marked nulls.
+
+
+
+\subsection{SQL Evaluation semantic}
+In this sub-section we propose a reasonable semantic for the SQL evaluation. Keep in mind that it is only a reasonable one as it has yet to be proven that it fits the SQL evaluation. Such work have to be done either thanks to a deep code analysis, or more realistically an high number of practical tests. 
+
+\begin{mydef}
+	\begin{align*}
+		%Eval_{SQL}((\Sigma,R,\emptyset,P),D)& = \left\{\begin{array}{ll}
+		%	\sigma_{\Sigma}(R^\times) \mbox{ if } \forall r \in R, r \mbox{ is a relation} \\
+		%	\sigma_{\Sigma}(Eval_{SQL}((*,R \setminus \{Q\},\emptyset,P),D)) \times Eval_{SQL}(Q,D) \mbox{ if } Q %\mbox{ is a query}
+		%\end{array}\right. \\
+		Eval_{SQL}((\Sigma,R,\emptyset,P),D)& =  \sigma_{\Sigma}(R^\times) \\
+		Eval_{SQL}((\Sigma,R,H_1\land H_2,P),D) & = \sigma_{\Sigma}(Eval_{SQL}((*,R,H_1,P),D) \cap Eval_{SQL}((*,R,H_2,P),D)) \\
+		Eval_{SQL}((\Sigma,R,H_1\lor H_2,P),D) & =  \sigma_{\Sigma}(Eval_{SQL}((*,R,H_1,P),D) \cup Eval_{SQL}((*,R,H_2,P),D)) \\
+		Eval_{SQL}((\Sigma,R,null(r_i.a_i),P),D) & =\sigma_\Sigma(\llbracket x^n | R^\times(x) = n \land \exists t, x[r_i.a_i] = \bot_t  \rrbracket)\\
+		Eval_{SQL}((\Sigma,R,const(r_i.a_i),P),D) & = \sigma_\Sigma(\llbracket x^n | R^\times(x) = n \land \forall t, x[r_i.a_i] \neq \bot_t  \rrbracket) \\
+		Eval_{SQL}((\Sigma,R,null(p_i),P),D) & =\sigma_\Sigma(\llbracket x^n | R^\times(x) = n \land \exists t, P[p_i] = \bot_t  \rrbracket)\\
+		Eval_{SQL}((\Sigma,R,const(p_i),P),D) & = \sigma_\Sigma(\llbracket x^n | R^\times(x) = n \land \forall t, P[p_i] \neq \bot_t  \rrbracket) \\
+		Eval_{SQL}((\Sigma,R,r_i.a_i = c_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R^\times(x) = n \land x[r_i.a_i] = c_i \rrbracket)\\
+		Eval_{SQL}((\Sigma,R,r_i.a_i = r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land x[r_i.a_i] = x[r_j.a_j]   \rrbracket)\\
+		Eval_{SQL}((\Sigma,R,r_i.a_i = p_i,P),D) & = \sigma_\Sigma( \llbracket  x^n  | R^\times(x) = n \land x[r_i.a_i] = P[p_i]  \rrbracket )\\
+		Eval_{SQL}((\Sigma,R,r_i.a_i \neq c_i,P),D) & =  \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land x[r_i.a_i] \neq c_i \land \forall t, x[r_i.a_i] \neq \bot_t  \rrbracket )\\
+		Eval_{SQL}((\Sigma,R,r_i.a_i \neq r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land x[r_i.a_i] \neq x[r_j.a_j] \land \forall t, x[r_i.a_i] \neq \bot_t \land \forall t, x[r_j.a_j] \neq \bot_t  \rrbracket)\\
+		Eval_{SQL}((\Sigma,R,r_i.a_i \neq p_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R^\times(x) = n \land x[r_i.a_i] \neq P[p_i] \land \forall t, x[r_i.a_i] \neq \bot_t \land \forall t, P[p_i] \neq \bot_t \rrbracket)\\
+		Eval_{SQL}((\Sigma,R,r_i.a_i > c_i,P),D) & =  \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land x[r_i.a_i] > c_i  \rrbracket )\\
+		Eval_{SQL}((\Sigma,R,r_i.a_i > r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land x[r_i.a_i] > x[r_j.a_j]  \rrbracket)\\
+		Eval_{SQL}((\Sigma,R,r_i.a_i > p_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R^\times(x) = n \land x[r_i.a_i] > P[p_i]  \rrbracket)\\
+		Eval_{SQL}((\Sigma,R,r_i.a_i < c_i,P),D) & =  \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land x[r_i.a_i] < c_i  \rrbracket )\\
+		Eval_{SQL}((\Sigma,R,r_i.a_i < r_j.a_j,P),D) & = \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land x[r_i.a_i] < x[r_j.a_j]   \rrbracket)\\
+		Eval_{SQL}((\Sigma,R,r_i.a_i < p_i,P),D) & = \sigma_\Sigma(\llbracket x^n | R^\times(x) = n \land x[r_i.a_i] < P[p_i] \rrbracket)\\
+		Eval_{SQL}((\Sigma,R,exists(Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land Eval_{SQL}(Q[x],D) \neq \emptyset \rrbracket)\\
+		Eval_{SQL}((\Sigma,R,notexists(Q),P),D) & =  \sigma_\Sigma( \llbracket x^n | R^\times(x) = n \land Eval_{SQL}(Q[x],D) = \emptyset \rrbracket)\\
+	\end{align*}
+	
+	\iffalse 
+	\begin{align*}
+		Eval_{SQL}(Q \setminus Q',D) & = 	Eval_{SQL}(Q,D) \setminus Eval_{SQL}(Q',D) \\
+		Eval_{SQL}(Q \cup Q',D) & = 	Eval_{SQL}(Q,D) \cup Eval_{SQL}(Q',D) \\
+		Eval_{SQL}(Q \uplus Q',D) & = 	Eval_{SQL}(Q,D) \uplus Eval_{SQL}(Q',D) \\
+		Eval_{SQL}(Q \cap Q',D) & = 	Eval_{SQL}(Q,D) \cap Eval_{SQL}(Q',D) \\
+		Eval_{SQL}(distinct(Q),D) & = 	\llbracket x^1 | x \in \{Eval_{SQL}(Q,D)\} \rrbracket \\
+	\end{align*}
+	\fi
+	
+\end{mydef}
+
+
+
+
+

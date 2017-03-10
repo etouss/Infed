@@ -1,82 +1,91 @@
 
-\documentclass{article}
-
-\usepackage[english]{babel} %
-\usepackage[T1]{fontenc} %
-\usepackage[latin1]{inputenc} %
-\usepackage{a4wide} %
-\usepackage{palatino} %
-
-\let\bfseriesbis=\bfseries \def\bfseries{\sffamily\bfseriesbis}
-
-
-\newenvironment{point}[1]%
-{\subsection*{#1}}%
-{}
-
-\setlength{\parskip}{0.3\baselineskip}
-
-\begin{document}
-
-\title{SQL Query evaluation on Incomplete Databases with correctness guarantees }
-
-\author{Etienne Toussaint, Leonid Libkin \\
-	Laboratory for Foundations of Computer Science, The University of Edinburgh }
-
-\date{21st August 2016}
-
-\maketitle
-
-\pagestyle{empty} %
-\thispagestyle{empty}
-
-%% Attention: pas plus d'un recto-verso!
+% \documentclass{article}
+%
+% \usepackage[english]{babel} %
+% \usepackage[T1]{fontenc} %
+% \usepackage[latin1]{inputenc} %
+% \usepackage{a4wide} %
+% \usepackage{palatino} %
+%
+% \let\bfseriesbis=\bfseries \def\bfseries{\sffamily\bfseriesbis}
+%
+%
+% \newenvironment{point}[1]%
+% {\subsection*{#1}}%
+% {}
+%
+% \setlength{\parskip}{0.3\baselineskip}
+%
+% \begin{document}
+%
+% \title{SQL Query evaluation on Incomplete Databases with correctness guarantees }
+%
+% \author{Etienne Toussaint, Leonid Libkin \\
+% 	Laboratory for Foundations of Computer Science, The University of Edinburgh }
+%
+% \date{21st August 2016}
+%
+% \maketitle
+%
+% \pagestyle{empty} %
+% \thispagestyle{empty}
+%
+% %% Attention: pas plus d'un recto-verso!
 
 
 \begin{point}{The general context}
-  Due to the increase of data, the growing variety of tools used to manage them, there are more databases that are incomplete.  Handling incomplete information is one of the oldest topics in database research, the standard way of answering queries on incomplete databases is to compute certain answer:  those that do not depend on the interpretation of unknown data. Computing certain answers is coNP-hard for most reasonable semantics, however 
-  it is not yet a reason for undesirable behavior. Indeed one could expect from an evaluation over incomplete databases to either miss some certain answers, or returning some that are not, but not both at the same time. 
-  The problem with SQL is that it produces both kinds of errors as it have been shown recently in . They also offer a translation on relational algebra in order to ensure that only one kind of error are produce.
+  It is a fact of life that data we need to handle on an everyday basis is rarely complete.  Handling incomplete information is one of the oldest topics in database research, we have a good theoretical understanding of what is needed and what it takes to produce correct results over incomplete databases. However most of those results have limited applications due to their high complexity. The standard way of answering queries on incomplete databases is to compute certain answers:  those that do not depend on the interpretation of unknown data. 
+  
+  Computing certain answers is coNP-hard for most reasonable semantics \cite{abiteboul1991representation}, however it is not yet a reason for undesirable behavior. Indeed one could expect from an evaluation over incomplete databases to either miss some certain answers, or returning some that are not, but not both at the same time. 
+  
+  The problem with SQL is that it produces both kinds of errors. \cite{guagliardo2016making}
 
 \end{point}
 
 \begin{point}{The research problem}
-	
- The translation on relational algebra in order to have correctness guarantee has proven to be efficient, however DBMS do not translate queries in relational algebra. Moreover relational algebra is based on sets semantic while SQL databases are based on bags. The question that naturally arises is can we find a direct translation from SQL to SQL which ensure correctness regarding bags semantic.
+ My internship focuses on creating an algorithm based upon SQL evaluation in order to ensure that only certain answers are return. We will focus on rewriting the queries before proceed with there evaluation.
+ A translation on relational algebra having this property is already available \cite{guagliardo2016making}, and is our main source of work.
  
- The aim of my internship is to propose a direct translation as efficient as possible which has correctness guarantee, and implement it.  
+ The translation on relational algebra has proven to be efficient, however DBMS do not translate queries in relational algebra. Moreover relational algebra is based on sets semantic while SQL databases are based on bags. The question that naturally arises is can we find a direct translation from SQL to SQL which ensure correctness regarding bags semantic. Moreover SQL scheme might contain constraints such as as keys and foreign keys that we want to take in account.
+ 
+ The aim of my internship is to propose a direct translation from SQL to SQL as efficient as possible which has correctness guarantee, and implement it.  
 
 \end{point}
 
 \begin{point}{Your contribution}
+\emph{Naive evaluation has correctness guarantees for positive relational algebra} \cite{gheerbrant2014naive}. This result implies that false positives come from the negation in queries. In order to deal with negation, the idea is to compute an over-approximation of the correct answers. However computing such a set can be really expensive, so we tried to avoid it as much as possible and to make it fast when we had to.
+A simple static analyse of the query and database scheme allowed us to deal with constraints such as keys and foreign keys.
 
-The main idea is that order to compute a strict subset of certain answers, we also compute an over-approximation of those certain-answer due to the presence of negation in the queries. However computing such a set can be really expensive, so i tried to avoid it as much as possible and to make it fast when we had to compute it.
-
-The contributions of my internship are the following: a semantic of SQL evaluation (section 2); the actual SQL to SQL translation (section 3); methods to help the planner while computing disjunctive queries answers (section 5); a Postgres extension implementing the translation. 
+The contributions of my internship are the following: a syntax and a semantic for SQL evaluation (section \ref{semantic}); the SQL to SQL translation (section \ref{translation}); methods to help the planner while computing disjunctive queries answers (section \ref{redun},\ref{opti}); a Postgres extension implementing the translation. 
 \end{point}
 
 \begin{point}{Arguments supporting its validity}
- 
-  The translation is proven to have correctness guarantee on a semantic of SQL evaluation, however such semantic has to be prove right (Code analysis due to lack of literature). Indeed work have to be done to .... however we did not find a counter example.
+  The translation is proven to have correctness guarantee on a semantic of SQL evaluation, however such semantic has to be prove right.  We also have to work on a proper definition of certain answers for SQL Nulls in order to formally extends our results to commercial DBMS.
   
-  Benchmarks show that the various methods propose increase performances, and it's proven that those transformation does not change answers. Many of the methods can be applied to optimize more general query with only a few precautions.
-  
-  The translation will lead to a true professional implementation by ... in  customize Postgres distributions.
+  First results show that the various methods propose increase performances, and it's proven that those transformations does not change answers. Moreover many of the methods can be applied to optimize more general query with only a few precautions.
 \end{point}
 
 
 \begin{point}{Summary and future work}
   
- During my internship, i have proposed a direct translation from SQL to SQL with correctness guarantee, and i was able to implement a proof concept. More fundamental efforts to improve direct SQL translation will be to formalize SQL evaluation semantic. On a practical point of view, the way Postgres (or any other DBMS) compute disjunctive queries should be improve directly in the software (Hash Join with disjunction), and work should be done to ensure that the translated query behave well with parallelizationn.
-  A very interesting ?next question? 
+ During my internship, i have proposed a direct translation from SQL to SQL with correctness guarantee, and i was able to implement a proof of concept which is an Extension to Postgres. This extension is able to rewrite the query and optimize it thanks to the scheme constraints. Our results confirm the feasibility as our algorithm take at most 6 times longer than the initial query to compute a subset of certain answers. 
+ 
+ On a practical point of view, we miss only a few steps in order to implement a new functionality to SQL DBMS. The extension have to be link with the parser, the algorithm used to rewrite the queries have to be improve. Finally the methods we use to help the planner should be implemented directly in DBMS as most of them can improve the computation of general disjunctive queries.
+ 
+ On a theoretical point of view, one can always improve the translation of a query in a better/faster approximation of certain answers. Moreover we have to figure out and formalize what are certain answers on SQL nulls. 
+ 
+ Relational databases are just a small part of the issue, indeed dealing with missing information is a problem in every database, and it might be interesting to see which results can be used in other database systems.
 
 \end{point}
 
-\begin{point}{Notes and Acknowledgements}
+\begin{point}{Acknowledgments}
+	I wish to thanks the University of Edinburgh for their warm welcome. I am grateful to the whole team which help me a lot an various part of my internship. A special  thanks to Nadime Francis which was always available to discuss any subject. Thanks to Paolo Guagliardo which i disturb far too much with questions, that he always answered with patience. 
+	
+	Last but not least thanks to Leonid Libkin for the opportunity, i would not be able to express how much i am grateful for his availability and help throughout every step of my internship. 
 \end{point}
 
 
-\end{document}
+% \end{document}
 
 
 

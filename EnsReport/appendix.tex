@@ -1,0 +1,440 @@
+\clearpage
+\appendix
+\section{Appendix}
+\subsection{Bags}
+
+\begin{mydef}
+	We call a bag $B$ a function $D \rightarrow \NN$ such that $B(x)$ represents the multiplicity of $x$ in the bag $B$.  
+\end{mydef}
+
+\begin{mydef}
+	\begin{align*}
+		\forall x, \emptyset(x)  & = 0 \\
+		\forall x, (B_1 \cap B_2)(x)  & = min(B_1(x),B_2(x)) \\
+		\forall x, (B_1 \cup B_2)(x)  & = max(B_1(x),B_2(x)) \\
+		\forall x, (B_1 \uplus B_2)(x)  & = B_1(x) + B_2(x) \\
+		\forall x, (B_1 \setminus B_2)(x)  & = max(0,B_1(x) - B_2(x)) \\
+		\forall x, \llbracket a \rrbracket(x) & = \left\{\begin{array}{ll}
+			1 \mbox{ if } x = a \\
+			0 \mbox{ otherwise}
+		\end{array}\right. \\
+		\forall x, \llbracket a^n \rrbracket(x) & = \left\{\begin{array}{ll}
+			n \mbox{ if } x = a \\
+			0 \mbox{ otherwise}
+		\end{array}\right. \\
+		\forall x, \llbracket y^n | P(y,n) \rrbracket(x)  & = max(\{ i | P(x,i) \}) \\
+		x \in B & \iff B(x) \geq 1 \\
+		x \in^n B & \iff B(x) \geq n \\
+		x \notin B & \iff B(x) = 0 \\
+		B_1 = B_2 &  \iff \forall x, B_1(x) = B_2(x) \\
+		B_1 \subseteq B_2 &  \iff \forall x, B_1(x) \leq B_2(x) \\
+		\{B\}  & = \{x | B(x) \geq 1\} \\
+	\end{align*}
+\end{mydef}
+
+\subsection{Inductive definition}
+In this section we develop the definition, and building of the sets used in section 3.
+\begin{mydef}
+	\begin{align*}
+		\bot^T_{(\Sigma,R,H_1 \land H_2,P)} & = \bot^T_{(\Sigma,R,H_1,P)} \cup \bot^T_{(\Sigma,R,H_2,P)} \\
+		\bot^T_{(\Sigma,R,H_1 \lor H_2,P)} & = \bot^T_{(\Sigma,R,H_1,P)} \cap \bot^T_{(\Sigma,R,H_2,P)} \\
+		\bot^T_{(\Sigma,R,r_i.a_i = c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i \neq c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i > c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i < c_i,P)} & = \{r_i.a_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i = r_j.a_j,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i \neq r_j.a_j,P)} & = \{r_i.a_i,r_j.a_j\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i > r_j.a_j,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i < r_j.a_j,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i = p_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i \neq p_i,P)} & = \{r_i.a_i,p_i\} \\
+		\bot^T_{(\Sigma,R,r_i.a_i > p_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,r_i.a_i < p_i,P)} & = \emptyset \\
+		\bot^T_{(\Sigma,R,exists(Q),P)} & = \bot^T_{Q[?]} \\
+		\bot^T_{(\Sigma,R,notexists(Q),P)} & = \bot^F_{Q[?]}\\
+	\end{align*}
+	\begin{align*}
+		\bot^F_{(\Sigma,R,H_1 \land H_2,P)} & = \bot^F_{(\Sigma,R,H_1,P)} \cap \bot^F_{(\Sigma,R,H_2,P)} \\
+		\bot^F_{(\Sigma,R,H_1 \lor H_2,P)} & = \bot^F_{(\Sigma,R,H_1,P)} \cup \bot^F_{(\Sigma,R,H_2,P)} \\
+		\bot^F_{(\Sigma,R,r_i.a_i = c_i,P)} & =\emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i \neq c_i,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i > c_i,P)} & =\emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i < c_i,P)} & =\emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i = r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i \neq r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i > r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i < r_j.a_j,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i = p_i,P)} & = \emptyset\\
+		\bot^F_{(\Sigma,R,r_i.a_i \neq p_i,P)} & = \emptyset \\
+		\bot^F_{(\Sigma,R,r_i.a_i > p_i,P)} & = \emptyset\\
+		\bot^F_{(\Sigma,R,r_i.a_i < p_i,P)} & = \emptyset\\
+		\bot^F_{(\Sigma,R,exists(Q),P)} & = \bot^F_{Q[?]} \\
+		\bot^F_{(\Sigma,R,notexists(Q),P)} & = \bot^T_{Q[?]}\\
+	\end{align*}
+\end{mydef}
+
+\begin{mydef}
+	\begin{align*}
+		nested^+(H_1\land H_2) & = \{H_1 \land H_2\}  \cup nested^+(H_1) \cup nested^+(H_2) \\
+		nested^+(H_1\lor H_2) & = \{H_1 \lor H_2\}  \cup nested^+(H_1) \cup nested^+(H_2) \\
+		nested^+(r_i.a_i = c_i) & = \{r_i.a_i = c_i\} \\
+		nested^+(r_i.a_i \neq c_i) & = \{r_i.a_i \neq c_i\} \\
+		nested^+(r_i.a_i > c_i) & = \{r_i.a_i > c_i\} \\
+		nested^+(r_i.a_i < c_i) & = \{r_i.a_i < c_i\} \\
+		nested^+(r_i.a_i = r_j.a_j) & = \{r_i.a_i = r_j.a_j\} \\
+		nested^+(r_i.a_i \neq r_j.a_j) & = \{r_i.a_i \neq r_j.a_j\} \\
+		nested^+(r_i.a_i > r_j.a_j) & = \{r_i.a_i > r_j.a_j\} \\
+		nested^+(r_i.a_i < r_j.a_j) & = \{r_i.a_i < r_j.a_j\} \\
+		nested^+(r_i.a_i = p_j) & = \{r_i.a_i = p_j\} \\
+		nested^+(r_i.a_i \neq p_j) & = \{r_i.a_i \neq p_j\} \\
+		nested^+(r_i.a_i > p_j) & = \{r_i.a_i > p_j\} \\
+		nested^+(r_i.a_i < p_j) & = \{r_i.a_i < p_j\} \\
+		nested^+(exists(Q)) & = \{exists(Q)\} \cup nested^+(Q) \\
+		nested^+(notexists(Q)) & = \{notexists(Q)\} \cup nested^-(Q) \\
+	\end{align*}
+	\begin{align*}
+		nested^-(H_1\land H_2) & =nested^-(H_1) \cup nested^-(H_2) \\
+		nested^-(H_1\lor H_2) & =  nested^-(H_1) \cup nested^-(H_2) \\
+		nested^-(r_i.a_i = c_i) & = \emptyset \\
+		nested^-(r_i.a_i \neq c_i) & = \emptyset \\
+		nested^-(r_i.a_i > c_i) & = \emptyset \\
+		nested^-(r_i.a_i < c_i) & = \emptyset \\
+		nested^-(r_i.a_i = r_j.a_j) & = \emptyset \\
+		nested^-(r_i.a_i \neq r_j.a_j) & = \emptyset \\
+		nested^-(r_i.a_i > r_j.a_j) & = \emptyset \\
+		nested^-(r_i.a_i < r_j.a_j) & = \emptyset \\
+		nested^-(r_i.a_i = p_j) & = \emptyset \\
+		nested^-(r_i.a_i \neq p_j) & = \emptyset \\
+		nested^-(r_i.a_i > p_j) & = \emptyset \\
+		nested^-(r_i.a_i < p_j) & = \emptyset \\
+		nested^-(exists(Q)) & =nested^-(Q) \\
+		nested^-(notexists(Q)) & = nested^+(Q) \\
+	\end{align*}
+	
+	
+	\begin{align*}
+		nested(Q) & = nested^-(Q) \cup nested^+(Q)
+	\end{align*}
+\end{mydef}
+
+We do not prove that those inductive definitions verify the property needed in section \label{redun}, however such a proof is fairly straight forward with an induction.
+
+\subsection{Proof of proposition 2}
+\begin{myprop*}
+	$$\forall Q \in \llbracket SQL \rrbracket, Eval_{SQL}(Q^+,D) \subseteq cert_\bot(Q,D)$$
+	\end{myprop*}
+\begin{myprop*}
+	$$\forall Q \in \llbracket SQL \rrbracket, cert_\bot(Q,D) \subseteq Eval_{SQL}(Q^?,D)$$
+\end{myprop*}
+
+\begin{proof}
+	The proof of prop \ref{prop2} is made by induction over the query $Q$ assuming only prop \ref{prop3}.
+	\begin{align*}
+		Q = (\Sigma,R,\emptyset,P) \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow x \in^n \sigma_\Sigma(R^\times)  \\
+		& \Rightarrow \forall v, v(x) \in^n \sigma_\Sigma(v(R)^\times) \mbox{ by \ref{prop1}} \\
+		& \Rightarrow \forall v, v(x) \in^n \sigma_\Sigma(Eval_{SQL}(Q_*,v(D))) \\
+		& \Rightarrow x \in^n cert_\bot(Q,D)
+	\end{align*}
+	\begin{align*}
+		Q = (\Sigma,R,r_i.a_i \neq p_i,P) \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{Eval_{SQL}(Q_*^+,D)(z)} \geq n  \\
+		Moreover\\
+		Eval_{SQL}(Q^+_*,D)(z)  \geq k & \Rightarrow  Eval_{SQL}((*,R,(r_i.a_i \neq p_i )^*,P),D)(z)  = k \\
+		& \Rightarrow Eval_{SQL}((*,R,r_i.a_i \neq p_i \land const(r_i,a_i) \land const(p_i),P),D)(z)  = k \\
+		& \Rightarrow R^\times(x) \geq \land x[r_i.a_i] \neq P[p_i] \land \forall t, x[r_i.a_i] \neq \bot_t \land \forall t, P[p_i] \neq \bot_t \\
+		Moreover \\
+		\forall t, x[r_i.a_i] \neq \bot_t \land \forall t, P[p_i] \neq \bot_t & \Rightarrow \forall h, h(x)[r_i.a_i] = x[r_i.a_i] \land h(P)[p_i] = P[p_i] \\
+		Then \\
+		Eval_{SQL}(Q^+_*,D)(z) \geq k & \Rightarrow R^\times(x) \geq k \land \forall h, h(x)[r_i.a_i] \neq h(P)[p_i] \\
+		& \Rightarrow cert_\bot(Q_*,D)(z) \geq k \\
+		Then \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{cert_\bot(Q_*,D)(z)} \geq n  \\
+		& \Rightarrow x \in^n cert_\bot(Q,D) \\
+	\end{align*}
+	\begin{align*}
+		Q = (\Sigma,R,H_1\land H_2,P) \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{Eval_{SQL}(Q_*^+,D)(z)} \geq n  \\
+		Moreover\\
+		Eval_{SQL}(Q^+_*,D)(z)  \geq k & \Rightarrow  Eval_{SQL}((*,R,H_1^*\land H_2^*,P),D)(z)  \geq k \\
+		& \Rightarrow  (Eval_{SQL}((*,R,H_1^*,P),D) \cap Eval_{SQL}((*,R,H_2^*,P),D))(z)  \geq k \\
+		& \Rightarrow  (Eval_{SQL}((*,R,H_1,P)^+,D) \cap Eval_{SQL}((*,R,H_2,P)^+,D))(z)  \geq k \\
+		& \Rightarrow  (Eval_{SQL}((*,R,H_1,P)^+,D))(x) \geq k \land  (Eval_{SQL}((*,R,H_2,P)^+,D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot((*,R,H_1,P),D))(x) \geq k \land  (cert_\bot((*,R,H_2,P),D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot((*,R,H_1,P),D) \cap cert_\bot((*,R,H_2,P),D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot((*,R,H_1 \land H_2,P),D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot(Q_*,D))(z)  \geq k \\
+		Then \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{cert_\bot(Q_*,D)(z)} \geq n  \\
+		& \Rightarrow x \in^n cert_\bot(Q,D) \\
+	\end{align*}
+	\begin{align*}
+		Q = (\Sigma,R,H_1\lor H_2,P) \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{Eval_{SQL}(Q_*^+,D)(z)} \geq n  \\
+		Moreover\\
+		Eval_{SQL}(Q^+_*,D)(z)  \geq k & \Rightarrow  Eval_{SQL}((*,R,H_1^*\lor H_2^*,P),D)(z)  \geq k \\
+		& \Rightarrow  (Eval_{SQL}((*,R,H_1^*,P),D) \cup Eval_{SQL}((*,R,H_2^*,P),D))(z)  \geq k \\
+		& \Rightarrow  (Eval_{SQL}((*,R,H_1,P)^+,D) \cup Eval_{SQL}((*,R,H_2,P)^+,D))(z)  \geq k \\
+		& \Rightarrow  (Eval_{SQL}((*,R,H_1,P)^+,D))(x) \geq k \lor  (Eval_{SQL}((*,R,H_2,P)^+,D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot((*,R,H_1,P),D))(x) \geq k \lor  (cert_\bot((*,R,H_2,P),D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot((*,R,H_1,P),D) \cup cert_\bot((*,R,H_2,P),D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot((*,R,H_1 \lor H_2,P),D))(z)  \geq k \\
+		& \Rightarrow  (cert_\bot(Q_*,D))(z)  \geq k \\
+		Then \\
+		x \in^n Eval_{SQL}(Q^+,D) & \Rightarrow \sum_{z \in \{y | y \in Eval_{SQL}(Q_*^+,D) \land \sigma_\Sigma(y) = x \} }{cert_\bot(Q_*,D)(z)} \geq n  \\
+		& \Rightarrow x \in^n cert_\bot(Q,D) \\
+	\end{align*}
+\end{proof}
+
+\begin{proof}
+	The proof of prop \ref{prop3} is made by induction over the query $Q$ assuming only prop \ref{prop2}.
+	\begin{align*}
+		Q = (\Sigma,R,\emptyset,P) \\
+		x \in^n cert_\bot(Q,D) & \Rightarrow \forall v, v(x) \in^n Eval_{SQL}(Q,v(D)) \\
+		& \Rightarrow \forall v, v(x) \in^n \sigma_\Sigma(Eval_{SQL}(Q_*,v(D))) \\
+		& \Rightarrow \forall v, v(x) \in^n \sigma_\Sigma(v(R)^\times) \\
+		& \Rightarrow x \in^n \sigma_\Sigma(R^\times) \mbox{ by \ref{prop1}}\\
+		& \Rightarrow x \in^n Eval_{SQL}(Q^?,D) \\
+	\end{align*}
+	\begin{align*}
+		Q = (\Sigma,R,r_i.a_i = r_j.a_j,P) \\
+		x \in^n cert_\bot(Q,D) & \Rightarrow \sum_{z \in \{y | y \in cert_\bot(Q_*,D) \land \sigma_\Sigma(y) = x \} }{cert_\bot(Q_*,D)(z)} \geq n \\
+		Moreover\\
+		cert_\bot(Q_*,D)(z)  \geq k & \Rightarrow  \forall h, h(z) \in^k Eval_{SQL}(Q_*,h(D)) \\
+		& \Rightarrow  \forall h,\forall t, R^\times(z) \geq k \land h(z)[r_i.a_i] = h(z)[r_j.a_j] \land h(z)[r_i.a_i] \neq \bot_t \land h(z)[r_j.a_j] \neq \bot_t  \\
+		Moreover \\
+		\mbox{ TRUE} & \Rightarrow \forall g,\forall t, g(z)[r_i.a_i] \neq \bot_t \\
+		\forall h, h(z)[r_i.a_i] = h(z)[r_j.a_j] & \Rightarrow \exists h, h(z)[r_i.a_i] = h(z)[r_j.a_j] \\
+		& \Rightarrow z[r_i.a_i] = z[r_j.a_j] \lor (\exists t, z[r_i.a_i]  = \bot_t) \lor (\exists t, z[r_j.a_j] = \bot_t) \\
+		Then\\
+		cert_\bot(Q_*,D)(z)  \geq k & \Rightarrow  R^\times(z) \geq k \land z[r_i.a_i] = z[r_j.a_j] \lor (\exists t, z[r_i.a_i]  = \bot_t) \lor (\exists t, z[r_j.a_j] = \bot_t) \\
+		& \Rightarrow R^\times(z) \geq k \land z \in Eval_{SQL}((*,R,(r_i.a_i = r_j.a_j \lor null(r_i.a_i) \lor null(r_j.a_j)),P),D) \\
+		& \Rightarrow R^\times(z) \geq k \land z \in Eval_{SQL}((*,R,(r_i.a_i = r_j.a_j)^{**},P),D) \\
+		& \Rightarrow Eval_{SQL}((*,R,r_i.a_i = r_j.a_j,P)^?,D)(z) \geq k \\
+		Then \\
+		x \in^n cert_\bot(Q,D) &\Rightarrow  \sum_{z \in \{y | y \in cert_\bot(Q_*,D) \land \sigma_\Sigma(y) = x \} }{Eval_{SQL}(Q_*^?,D)(z)} \geq n \\
+		& \Rightarrow x \in^n Eval_{SQL}(Q^?,D) \\
+	\end{align*}
+	\begin{align*}
+		Q = (\Sigma,R,H_1\land H_2,P) \\
+		x \in^n cert_\bot(Q,D) & \Rightarrow \sum_{z \in \{y | y \in cert\bot(Q_*,D) \land \sigma_\Sigma(y) = x \} }{cert_\bot(Q_*,D)(z)} \geq n \\
+		Moreover\\
+		cert_\bot(Q_*,D)(z)  \geq k & \Rightarrow R^\times(z) \geq k \land \forall h, h(z) \in Eval_{SQL}((*,R,H_1\land H_2,h(P)),h(D)) \\
+		& \Rightarrow R^\times(z) \geq k \land \forall h, h(z) \in Eval_{SQL}((*,R,H_1,h(P)),h(D)) \land h(z) \in Eval_{SQL}((*,R,H_1,h(P)),h(D))\\
+		& \Rightarrow cert_\bot((*,R,H_1,P),D)(z) \geq k \land  cert_\bot((*,R,H_2,P),D)(z) \geq k\\
+		&\Rightarrow Eval_{SQL}((*,R,H_1,P)^?,D)(z) \geq k \land  Eval_{SQL}((*,R,H_2,P)^?,D)(z) \geq k\\
+		&\Rightarrow Eval_{SQL}((*,R,H_1^{**},P),D)(z) \geq k \land  Eval_{SQL}((*,R,H_2^{**},P),D)(z) \geq k\\
+		&\Rightarrow Eval_{SQL}((*,R,H_1^{**} \land H_2^{**},P),D)(z) \geq k\\
+		&\Rightarrow Eval_{SQL}((*,R,H_1 \land H_2,P)^?,D)(z) \geq k\\
+		&\Rightarrow Eval_{SQL}(Q_*^?,D)(z) \geq k\\
+		Then \\
+		x \in^n cert_\bot(Q,D) &\Rightarrow  \sum_{z \in \{y | y \in posi_\bot(Q_*,D) \land \sigma_\Sigma(y) = x \} }{Eval_{SQL}(Q_*^?,D)(z)} \geq n \\
+		& \Rightarrow x \in^n Eval_{SQL}(Q^?,D) \\
+	\end{align*}
+\end{proof}
+
+\subsection{Proof of proposition 4}
+		\begin{figure}[H]
+		\caption{\label{hq-} Translation $(H,Q) \rightarrow H^{\bot^F} _Q$ }
+			\begin{mdframed}
+				\fontsize{8}{6}
+		\begin{align*}
+			(\Sigma,R,H \lor null(r_i.a_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
+			& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^T_{Q'} \\
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'} \\
+			(\Sigma,R,H \lor null(p_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
+			& \mbox{if } \exists Q' \in nested^-(Q), (H\lor null(p_i)) \in nested(Q'), p_i \in \bot^T_{Q'} \\
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\lor null(p_i)) \in nested(Q'), p_i \in \bot^F_{Q'} \\
+			(\Sigma,R,H \land const(r_i.a_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
+			& \mbox{if } \exists Q' \in nested^-(Q), (H\land const(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^T_{Q'} \\
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\land const(r_i.a_i)) \in nested(Q'), r_i.a_i \in \bot^F_{Q'} \\
+			(\Sigma,R,H \land const(p_i),P)^{\bot^F}_Q & \rightarrow (\Sigma,R,H^{\bot^F}_{Q},P) \\
+			& \mbox{if } \exists Q' \in nested^-(Q), (H\land const(p_i)) \in nested(Q'), p_i \in \bot^T_{Q'} \\
+			& \mbox{if } \exists Q' \in nested^+(Q), (H\land const(p_i)) \in nested(Q'), p_i \in \bot^F_{Q'} \\
+		\end{align*}
+	\end{mdframed}
+	\end{figure}
+	
+	\begin{mylem*}
+		$$\forall Q' \in nested^+(Q), Eval(Q,D) = Eval(Q^\bot_{Q'},D)$$
+	\end{mylem*}
+	\begin{mylem*}
+		$$\forall Q' \in nested^-(Q), Eval(Q,D) = Eval(Q^{\bot^F}_{Q'},D)$$
+	\end{mylem*}
+
+	\begin{proof}
+		Let suppose $H_1 \land H_2 \in nested^+(Q)$.
+		\\The critical case is when $\exists r_i.a_i \in (\bot^T_{H_1} \setminus \bot^T_{H_2})$ and $(H\lor null(r_i.a_i)\in nested(H_2)$. 
+		\\Let's assume there exists $x$ such that $x \in Eval_{SQL}(Q,D)$ and $x \notin Eval(Q^\bot_{H_1\land H_2},D)$. Moreover we know by induction that  $x \in Eval(Q^\bot_{H_1},D) \land x \in Eval(Q^\bot_{H_2},D)$. Then if $x[r_i.a_i] = \bot$ we know that $x \notin Eval_{SQL}(Q,D)$ as $x \in \bot^T_{H_1}$ and $H_1 \in nested^+(Q)$. So $x[r_i.a_i] \neq \bot$ then the rewriting is correct.
+		\\Let's assume there exists $x$ such that $x \notin Eval_{SQL}(Q,D)$ and $x \in Eval(Q^\bot_{H_1\land H_2},D)$. Moreover we know by induction that  $x \in Eval(Q^\bot_{H_1},D) \land x \in Eval(Q^\bot_{H_2},D)$. Then if $x[r_i.a_i] = \bot$ we know that $x \notin Eval_{SQL}(H_1,D)$ as $x \in \bot^T_{H_1}$. So $\forall H , x \notin Eval_{SQL}(H_1\land H,D)$ especially $Eval(Q^\bot_{H_1\land H_2},D)$. Then $x[r_i.a_i] \neq \bot$ then the rewriting is correct.
+		
+		Let suppose $H_1 \lor H_2 \in nested^-(Q)$.
+		\\The critical case is when $\exists r_i.a_i \in (\bot^F_{H_1} \setminus \bot^F_{H_2})$ and $(H\lor null(r_i.a_i)\in nested(H_2)$. 
+		\\Let's assume there exists $x$ such that $x \in Eval_{SQL}(Q,D)$ and $x \notin Eval(Q^\bot_{H_1\lor H_2},D)$. Morover we know by induction that  $x \in Eval(Q^\bot_{H_1},D) \land x \in Eval(Q^\bot_{H_2},D)$. Then if $x[r_i.a_i] = \bot$ we know that $x \notin Eval_{SQL}(Q,D)$ as $x \in \bot^F_{H_1}$ and $H_1 \in nested^-(Q)$. So $x[r_i.a_i] \neq \bot$ then the rewriting is correct.
+		\\Let's assume there exists $x$ such that $x \notin Eval_{SQL}(Q,D)$ and $x \in Eval(Q^\bot_{H_1\lor H_2},D)$. Morover we know by induction that  $x \in Eval(Q^\bot_{H_1},D) \land x \in Eval(Q^\bot_{H_2},D)$. Then if $x[r_i.a_i] = \bot$ we know that $x \in Eval_{SQL}(H_1,D)$ as $x \in \bot^F_{H_1}$. So $\forall H , x \in Eval_{SQL}(H_1\lor H,D)$ especially $Eval_{SQL}(Q^\bot_{H_1\lor H_2},D)$. Then $x[r_i.a_i] \neq \bot$ then the rewriting is correct.
+		
+		Other case are trivial as, $\bot^T$ resp.$\bot^F$ only increase with this$\land$ resp $\lor$. In case of negation we only have to assume that lemma \ref{lem3} is true.
+		\\The proof for lemma \ref{lem3} is analogue
+	\end{proof}
+	
+
+\subsection{Proof of proposition 5}
+\begin{myprop*}
+	Let $Q = (\Sigma,R,notexists((\Sigma',R',(l_1\lor l_2) \land H,P'),P)$
+	$$Eval_{SQL}(Q,D) = Eval_{SQL}((\Sigma,R,notexists(\Sigma',R',(l_1 \land H),P') \land notexists(\Sigma',R',(l_2 \land H),P'),P),D)$$
+\end{myprop*}
+\begin{proof}
+	\begin{align*}
+		x \in^n Eval_{SQL}(Q,D) & \Leftrightarrow x \in^n Eval_{SQL}((\Sigma,R,notexists((\Sigma',R',(l_1\land H) \lor (l_2 \land H),P'),P),D) \\
+		&  \Leftrightarrow R^\times(\sigma_{\Sigma} ^{-1}(x)) \geq n \land Eval_{SQL}((\Sigma',R',(l_1\land H) \lor (l_2 \land H),P'\cup x]),D) = \emptyset \\
+		& \Leftrightarrow R^\times(\sigma_{\Sigma} ^{-1}(x)) \geq n \land Eval_{SQL}((\Sigma',R',l_1\land H,P'\cup x]),D) \\
+		& \; \cup Eval_{SQL}((\Sigma',R',l_1\land H,P'\cup x]),D) = \emptyset \\
+		& \Leftrightarrow R^\times(\sigma_{\Sigma} ^{-1}(x)) \geq n \land Eval_{SQL}((\Sigma',R',l_1\land H,P'\cup x]),D) = \emptyset \\
+		& \; \land Eval_{SQL}((\Sigma',R',l_1\land H,P'\cup x]),D) = \emptyset \\
+		& \Leftrightarrow x \in^n Eval_{SQL}((\Sigma,R,notexists(\Sigma',R',(l_1 \land H),P'),P),D) \\
+		& \; \land x \in^n Eval_{SQL}((\Sigma,R,notexists(\Sigma',R',(l_2 \land H),P'),P),D) \\
+		&  \Leftrightarrow  x \in^n Eval_{SQL}((\Sigma,R,notexists(\Sigma',R',(l_1 \land H),P') \land notexists(\Sigma',R',(l_2 \land H),P'),P),D) \\
+	\end{align*}
+\end{proof}
+
+\subsection{Proof of proposition 6}
+
+\begin{myprop*}
+	Let $Q = (\Sigma,R,notexists((\Sigma',R',H_r \land H,P'),P)$ where $H_r$ denote every conditions which are on attributes of $r$ and such that $r \in R'_s$ then :
+	$$Eval_{SQL}(Q,D) = Eval_{SQL}((\Sigma,R,notexists(\Sigma',R'\setminus r,H \land exists(*,r,H_r,P'),P'),P),D) $$
+\end{myprop*}
+
+\begin{proof}
+	If $Eval_{SQL}((*,r,H_r,P'),D) = \emptyset$ then the proof is immediate. As $Eval_{SQL}(Q,D)$ will be equal to $ \sigma_{\Sigma}(R^\times)$ in deed $Eval_{SQL}((\Sigma',R',H_r \land H,P'),D) = \emptyset$ as there is no element of $r$ which are able to fulfill $H_r$ condition. We found exactly the same for \\$Eval_{SQL}((\Sigma,R,notexists(\Sigma',R'\setminus r,H \land exists(*,r,H_r,P'),P'),P),D)$ in deed $exists(*,r,H_r,P')$ will never be true.
+	
+	If $Eval_{SQL}((*,r,H_r,P'),D) \neq \emptyset$ then $exists(*,r,H_r,P')$ will always be true. Then \\$Eval_{SQL}((\Sigma,R,notexists(\Sigma',R'\setminus r,H \land exists(*,r,H_r,P'),P'),P),D) = Eval_{SQL}((\Sigma,R,notexists(\Sigma',R'\setminus r,H,P'),P),D)$ Moreover as $r$ is not connected to any other relation. We have \\$\{Eval_{SQL}((\Sigma',R'\setminus r,H,P'),D)\} = \{Eval_{SQL}(\Sigma',R',H,P'),D)\}$. Indeed we are only multiplying the number of row by the number of tuples in $r$. Then as we are only checking if the set is empty it does not change anything because each attributes linked with a upper-level query will still have at least one representative.
+\end{proof}
+
+\subsection{SQL nulls Translation}
+
+Here we present the translation for SQL Nulls. The only variation is due to the fact that $\bot_t = \bot_t$ is evaluate to true in case of marked nulls, while $\bot = \bot$ is evaluate to unknown in case of SQL nulls.
+
+\begin{figure}[H]
+	\caption{\label{q+2} Translatation $Q \rightarrow (Q^+,Q^?)$ }
+	\begin{mdframed}
+		\fontsize{8}{6}
+\begin{align*}
+	(\Sigma,R,H,P)^+ & \rightarrow (\Sigma,R,H^*,P) \\
+	(\Sigma,R,H,P)^? & \rightarrow (\Sigma,R,H^{**},P) 
+\end{align*}
+\end{mdframed}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{\label{h*2} Translatation $H \rightarrow H^*$ }
+	\begin{mdframed}
+		\fontsize{8}{6}
+\begin{align*}
+	(H_1 \land H_2)^* & \rightarrow H_1^* \land H_2^* \\
+	(H_1 \lor H_2)^* & \rightarrow H_1^* \lor H_2^* \\
+	(r_i.a_i = c_i)^* & \rightarrow r_i.a_i = c_i \\
+	(r_i.a_i \neq c_i)^*& \rightarrow r_i.a_i \neq c_i \\
+	(r_i.a_i = r_j.a_j)^* & \rightarrow r_i.a_i = r_j.a_j \\
+	(r_i.a_i \neq r_j.a_j)^* & \rightarrow r_i.a_i \neq r_j.a_j \\
+	null(r_i.a_i)^* & \rightarrow null(r_i.a_i) \\
+	const(r_i.a_i)^* & \rightarrow const(r_i.a_i) \\
+	exists(Q)^* & \rightarrow exists(Q^+) \\
+	notexists(Q)^* & \rightarrow notexists(Q^?) \\
+\end{align*}
+\end{mdframed}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{\label{h**2} Translatation $H \rightarrow H^{**}$ }
+	\begin{mdframed}
+		\fontsize{8}{6}
+\begin{align*}
+	(H_1 \land H_2)^{**} & \rightarrow H_1^{**} \land H_2^{**} \\
+	(H_1 \lor H_2)^{**} & \rightarrow H_1^{**} \lor H_2^{**} \\
+	(r_i.a_i = c_i)^{**} & \rightarrow r_i.a_i = c_i \lor null(r_i.a_i)\\
+	(r_i.a_i \neq c_i)^{**}& \rightarrow r_i.a_i \neq c_i \lor null(r_i.a_i)\\
+	(r_i.a_i = r_j.a_j)^{**} & \rightarrow r_i.a_i = r_j.a_j \lor null(r_i.a_i) \lor null(r_j.a_j)\\
+	(r_i.a_i \neq r_j.a_j)^{**} & \rightarrow r_i.a_i \neq r_j.a_j  \lor null(r_i.a_i) \lor null(r_j.a_j)\\
+	null(r_i.a_i)^{**} & \rightarrow null(r_i.a_i) \\
+	const(r_i.a_i)^{**} & \rightarrow const(r_i.a_i) \\
+	exists(Q)^{**} & \rightarrow exists(Q^?) \\
+	notexists(Q)^{**} & \rightarrow notexists(Q^+) \\
+\end{align*}
+\end{mdframed}
+\end{figure}
+
+\subsection{Query rewriting step}
+\begin{figure}[H]
+	\caption{\label{query_ex_1} Translated Query}
+	\begin{lstlisting}[language=SQL]
+SELECT o_orderkey
+FROM orders
+WHERE NOT EXISTS(
+	SELECT *
+	FROM lineitem,part
+	WHERE l_orderkey = o_orderkey OR l_orderkey IS NULL OR o_orderkey IS NULL
+	AND l_partkey = p_partkey OR l_partkey IS NULL OR p_partkey IS NULL);
+	\end{lstlisting}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{\label{query_ex_2} Query after remove redundant}
+	\begin{lstlisting}[language=SQL]
+SELECT o_orderkey
+FROM orders
+WHERE NOT EXISTS(
+	SELECT *
+	FROM lineitem,part
+	WHERE l_orderkey = o_orderkey
+	AND l_partkey = p_partkey OR l_partkey IS NULL);
+	\end{lstlisting}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{\label{query_ex_3} Query after split}
+	\begin{lstlisting}[language=SQL]
+SELECT o_orderkey
+FROM orders
+WHERE NOT EXISTS(
+	SELECT *
+	FROM lineitem,part
+	WHERE l_orderkey = o_orderkey
+	AND l_partkey = p_partkey)
+AND NOT EXISTS(
+	SELECT *
+	FROM lineitem,part
+	WHERE l_orderkey = o_orderkey
+	AND l_partkey IS NULL);
+	\end{lstlisting}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{\label{query_ex_4} Query after optimize FROM}
+	\begin{lstlisting}[language=SQL]
+SELECT o_orderkey
+FROM orders
+WHERE NOT EXISTS(
+	SELECT *
+	FROM lineitem,part
+	WHERE l_orderkey = o_orderkey
+	AND l_partkey = p_partkey)
+AND NOT EXISTS(
+	SELECT *
+	FROM lineitem
+	WHERE l_orderkey = o_orderkey
+	AND EXISTS(SELECT * FROM part WHERE l_partkey IS NULL));
+	\end{lstlisting}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{\label{query_ex_2} Query optimize with UNION ALL}
+	\begin{lstlisting}[language=SQL]
+SELECT o_orderkey
+FROM orders
+WHERE NOT EXISTS(
+	SELECT *
+	FROM ((SELECT * FROM lineitem,part WHERE l_partkey = p_partkey) 
+	UNION ALL (SELECT * FROM lineitem,part WHERE l_partkey IS NULL)) as lp
+	WHERE l_orderkey = o_orderkey);
+	\end{lstlisting}
+\end{figure}

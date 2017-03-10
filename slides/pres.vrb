@@ -1,0 +1,9 @@
+\frametitle{Answers in  SQL}
+			\begin{figure}
+					\includegraphics[scale=0.5]{db}
+			\end{figure}
+
+			A typical query we teach students to write: “Unpaid orders”
+		\end{frame}
+
+\end{document}

@@ -1,0 +1,171 @@
+\section{Query Optimization}
+\label{opti}
+In this section we offer rewriting methods that help the planner computing disjunctive query in a more efficient way. Such optimization rely on already existing DBMS like Postgres, those DBMS does not implement a marked nulls version yet, that is why we explain how our results can be used in the case of SQL nulls.
+ 
+\subsection{SQL null}
+The semantic usually used to deal with SQL nulls is that there should be no distinction when applying a marking function on the database nulls, and when applying a marking function on the result of a query.
+Formally, let $M$ be a marking function which mark each null value with a different stamp. 
+Then there should exist an isomorphism between : $Q(M(D))$ and $M(Q(D))$. However it's not always the case if we consider the SQL-fragment we offer in our syntax. 
+
+Moreover as mention before the property :
+Let $R$ be a set of relation, and $z$ a tuple then:
+$$(\forall v \mbox{ valuation}, v(R^\times)(v(z)) \geq k )\Leftrightarrow R^\times(z) \geq k  $$ 
+does not hold. Indeed Consider a relation $r = \llbracket \bot;\bot \rrbracket$ then $R^\times(\bot) \geq 2$ where as if $v(r) = \llbracket 2;3 \rrbracket $ then $v(r)(v(\bot)) < 2$
+Each SQL nulls can be evaluated differently by the valuation $v$.
+Then certain answers with nulls of a query $Q = (*,r,TRUE,\emptyset)$ would be $\llbracket \bot \rrbracket$ which does not seem to be satisfactory. A proper definition has not been found yet, and we are currently working on it.
+
+We will only consider a fragment where the isomorphism holds. And we will compute the certain answers as if nulls in the answers where marked nulls, and that the multiplicity of them where the sum of each marked nulls.
+Just a few change to the translation (details in the appendix) allow us to have a valid evaluation algorithm.
+
+\subsection{Split the query}
+The main blow-up in computation time come from the fact that most DBMS give up using hash-join, as soon as they meet a disjunction, and choose to use nested-loop.
+In order to force the planner into using hash-join the way they should, we split the query in the various form it may have due to disjunction. Formally, the negative sub queries's conditions of a query $Q$ are put in DNF, and each part are evaluate separately. We are aware that such algorithm have a exponential complexity however, it work well in practice.
+
+\begin{myprop}
+	Let $Q = (\Sigma,R,notexists((\Sigma',R',(l_1\lor l_2) \land H,P'),P)$
+	$$Eval_{SQL}(Q,D) = Eval_{SQL}((\Sigma,R,notexists(\Sigma',R',(l_1 \land H),P') \land notexists(\Sigma',R',(l_2 \land H),P'),P),D)$$
+\end{myprop}
+
+\subsection{Optimize FROM relations}
+
+We can avoid computing the whole bag $R'^\times$. 
+First we build the set of relation that are not linked to an upper-level query by any of there attributes denotes $R'_s$. Then we can rewrite the query $Q'$.
+
+\begin{myprop}
+	Let $Q = (\Sigma,R,notexists((\Sigma',R',H_r \land H,P'),P)$ where $H_r$ denote every conditions which are on attributes of $r$ and such that $r \in R'_s$ then :
+	$$Eval_{SQL}(Q,D) = Eval_{SQL}((\Sigma,R,notexists(\Sigma',R'\setminus r,H \land exists(*,r,H_r,P'),P'),P),D) $$
+\end{myprop}
+
+We have to add an exists sub-query in order to check if the selection over the relation $r$ is not empty. Indeed if the selection is empty then the Cartesian product $R'\times$ will be empty.
+
+This methods help the DBMS because, it won't have to work on rows that are useless. Indeed as we are in a not exists condition, we only care about having one represent for each tuple that might be linked with the upper-level query.
+
+\subsection{Improve computation}
+The methods propose in this sub-section is the most efficient, when the tuples compute fit in the memory. Indeed it offers the fastest way to compute the query $Q^?$ however, it really computes each of them and have to store them. As soon as the Database involved does not fit in the ram memory, this method will be really expensive as each computation will involve a slow write on the hard drive.
+We won't be able to present the property formally here as it uses a fragment of SQL which is not supported in our syntax ie. (UNION ALL). The idea is to replace disjunctive query with UNION ALL, as soon as $H = l_1\lor l_2$ verify the property such that: 
+\\  $(l_1 \implies \neg l_2) \land (l_2 \implies \neg l_1)$ then we have :
+$$ Eval_{SQL}((\Sigma,R,D,P),D) = Eval_{SQL}((\Sigma,R,l_1,P),D)\mbox{ UNION ALL } Eval_{SQL}((\Sigma,R,l_2,P),D)$$
+
+\section{Results}
+Every result presented here are based on TCP-H database instance, in this report we present a simplified query coming from TCP-H.
+TCP-H database schema guarantee that $o\_orderkey, p\_partkey, l\_orderkey$  are not null attributes. 
+Time were obtain on Postgres DBMS on a 10 Go instance with 0.5\% of nulls randomly spread among each null-able attributes. Each step of the rewriting where done thanks to our Postgres Extension, Queries obtain after each steps can be found in appendix. 
+
+\begin{figure}[H]
+	\caption{\label{query_ex} Initial SQL Query}
+	\begin{lstlisting}[language=SQL]
+SELECT o_orderkey
+FROM orders
+WHERE NOT EXISTS(
+	SELECT *
+	FROM lineitem,part
+	WHERE l_orderkey = o_orderkey
+	AND l_partkey = p_partkey);
+	\end{lstlisting}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{\label{query_ex_4} Query after Split and optimize FROM}
+	\begin{lstlisting}[language=SQL]
+SELECT o_orderkey
+FROM orders
+WHERE NOT EXISTS(
+	SELECT *
+	FROM lineitem,part
+	WHERE l_orderkey = o_orderkey
+	AND l_partkey = p_partkey)
+AND NOT EXISTS(
+	SELECT *
+	FROM lineitem
+	WHERE l_orderkey = o_orderkey
+	AND EXISTS(SELECT * FROM part WHERE l_partkey IS NULL));
+	\end{lstlisting}
+\end{figure}
+
+After the applying of the translation we obtain a query without any optimization, when trying to evaluate this query PSQL estimate time is $10^3$ times longer than for $Q$. Moreover when we actually run it, it seems to be true as we never manage to get to the end on big instances (nested-loop).
+The result is exactly the same after we remove redundant null checks, this result is explain by the fact that the planner try to compute the result in the exact same way because there is still disjunctions (nested-loop).
+As soon as we split the query, PSQL manage to compute the query and it take twice the time that we need to compute the initial query, it's easily understandable as we split the query in 2 different not exists (2 $\times$ Hash-Join).
+Finally on more complicated queries which might split in multiple not-exists queries, we try to mix UNION ALL and split. In worst case the computation takes 6 times longer than the computation of the initial query. However we did not have enough time to implement an heuristic to choose when to use UNION-ALL and when to split, this heuristic should use meta-data such as null-percent by attributes in order to predict if the tuples will fit the memory.
+
+The result present before are not as reliable as they should be, they were produce on a restraint number of queries, and just a few different instances of TCP-H Database. Moreover PSQL was running on my personal computer which is not that stable. Proper benchmarks will be generated during next week, and will be presented during the defense.  
+
+
+\iffalse
+\begin{figure}[H]
+	\caption{\label{query_ex_1} Translated Query}
+	\begin{lstlisting}[language=SQL]
+SELECT o_orderkey
+FROM orders
+WHERE NOT EXISTS(
+	SELECT *
+	FROM lineitem,part
+	WHERE l_orderkey = o_orderkey OR l_orderkey IS NULL OR o_orderkey IS NULL
+	AND l_partkey = p_partkey OR l_partkey IS NULL OR p_partkey IS NULL);
+	\end{lstlisting}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{\label{query_ex_2} Query after proposition 4}
+	\begin{lstlisting}[language=SQL]
+SELECT o_orderkey
+FROM orders
+WHERE NOT EXISTS(
+	SELECT *
+	FROM lineitem,part
+	WHERE l_orderkey = o_orderkey
+	AND l_partkey = p_partkey OR l_partkey IS NULL);
+	\end{lstlisting}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{\label{query_ex_3} Query after split}
+	\begin{lstlisting}[language=SQL]
+SELECT o_orderkey
+FROM orders
+WHERE NOT EXISTS(
+	SELECT *
+	FROM lineitem,part
+	WHERE l_orderkey = o_orderkey
+	AND l_partkey = p_partkey)
+AND NOT EXISTS(
+	SELECT *
+	FROM lineitem,part
+	WHERE l_orderkey = o_orderkey
+	AND l_partkey IS NULL);
+	\end{lstlisting}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{\label{query_ex_4} Query after clean FROM}
+	\begin{lstlisting}[language=SQL]
+SELECT o_orderkey
+FROM orders
+WHERE NOT EXISTS(
+	SELECT *
+	FROM lineitem,part
+	WHERE l_orderkey = o_orderkey
+	AND l_partkey = p_partkey)
+AND NOT EXISTS(
+	SELECT *
+	FROM lineitem
+	WHERE l_orderkey = o_orderkey
+	AND EXISTS(SELECT * FROM part WHERE l_partkey IS NULL));
+	\end{lstlisting}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{\label{query_ex_2} Query optimize with UNION ALL}
+	\begin{lstlisting}[language=SQL]
+SELECT o_orderkey
+FROM orders
+WHERE NOT EXISTS(
+	SELECT *
+	FROM ((SELECT * FROM lineitem,part WHERE l_partkey = p_partkey) 
+		UNION ALL (SELECT * FROM lineitem,part WHERE l_partkey IS NULL)) as lp
+	WHERE l_orderkey = o_orderkey);
+	\end{lstlisting}
+\end{figure}
+
+\fi
+
+

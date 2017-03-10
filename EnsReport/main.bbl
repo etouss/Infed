@@ -1,0 +1,47 @@
+\begin{thebibliography}{1}
+
+\bibitem{abiteboul1995foundations}
+Serge Abiteboul, Richard Hull, and Victor Vianu.
+\newblock {\em Foundations of databases: the logical level}.
+\newblock Addison-Wesley Longman Publishing Co., Inc., 1995.
+
+\bibitem{abiteboul1991representation}
+Serge Abiteboul, Paris Kanellakis, and G{\"o}sta Grahne.
+\newblock On the representation and querying of sets of possible worlds.
+\newblock {\em Theoretical Computer Science}, 78(1):159--187, 1991.
+
+\bibitem{date2005database}
+Chris Date.
+\newblock {\em Database in depth: relational theory for practitioners}.
+\newblock " O'Reilly Media, Inc.", 2005.
+
+\bibitem{gheerbrant2014naive}
+Am{\'e}lie Gheerbrant, Leonid Libkin, and Cristina Sirangelo.
+\newblock Na{\"\i}ve evaluation of queries over incomplete databases.
+\newblock {\em ACM Transactions on Database Systems (TODS)}, 39(4):31, 2014.
+
+\bibitem{guagliardo2016making}
+Paolo Guagliardo, Leonid Libkin, Leonid Libkin, Wim Martens, Domagoj
+  Vrgo{\v{c}}, Marco Console, Pablo Barcelo, Diego Figueira, Am{\'e}lie
+  Gheerbrant, Cristina Sirangelo, et~al.
+\newblock Making sql queries correct on incomplete databases: A feasibility
+  study.
+\newblock {\em Journal of the ACM}, 63:2, 2016.
+
+\bibitem{imielinski1984incomplete}
+Tomasz Imieli{\'n}ski and Witold Lipski~Jr.
+\newblock Incomplete information in relational databases.
+\newblock {\em Journal of the ACM (JACM)}, 31(4):761--791, 1984.
+
+\bibitem{libkin2016sql}
+Leonid Libkin.
+\newblock Sql’s three-valued logic and certain answers.
+\newblock {\em ACM Transactions on Database Systems (TODS)}, 41(1):1, 2016.
+
+\bibitem{van1998logical}
+Ron van~der Meyden.
+\newblock Logical approaches to incomplete information: A survey.
+\newblock In {\em Logics for databases and information systems}, pages
+  307--356. Springer, 1998.
+
+\end{thebibliography}

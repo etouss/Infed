@@ -1,0 +1,70 @@
+\documentclass{article}
+
+
+% \let\bfseriesbis=\bfseries \def\bfseries{\sffamily\bfseriesbis}
+%
+%
+% \newenvironment{point}[1]%
+% {\subsection*{#1}}%
+% {}
+%
+% \setlength{\parskip}{0.3\baselineskip}
+
+
+%% USEFUL packages
+\usepackage{mypackages}
+
+%% USEFUL macros
+\input{mymacros}
+
+
+%% Title
+% \title{}
+% \author{}
+% \date{}
+
+\begin{document}
+
+% \sloppy
+% \maketitle
+
+\title{SQL Query evaluation on Incomplete Databases with correctness guarantees }
+
+\author{Etienne Toussaint, Leonid Libkin \\
+	Laboratory for Foundations of Computer Science, The University of Edinburgh }
+
+\date{21st August 2016}
+
+\maketitle
+
+\pagestyle{empty} %
+\thispagestyle{empty}
+
+\input fichesynth.tex
+
+
+%\input abstract.tex
+
+
+\input semantics.tex
+\input preliminaries.tex
+\input fragmentsimple.tex
+\input fragmentorder.tex
+
+%\input fragmentup.tex
+
+%\input fragmentimpl.tex
+
+\input conclusion.tex
+
+%\input acknow.tex
+
+
+%% USEFUL Bibliography
+\clearpage
+\bibliographystyle{plain}
+\bibliography{dp-mset}
+
+\input appendix.tex
+
+\end{document}
