@@ -1,119 +1,28 @@
-DROP TABLE IF EXISTS PART CASCADE;
-CREATE TABLE PART (
-
-	P_PARTKEY		SERIAL PRIMARY KEY,
-	P_NAME			VARCHAR(55),
-	P_MFGR			CHAR(25),
-	P_BRAND			CHAR(10),
-	P_TYPE			VARCHAR(25),
-	P_SIZE			INTEGER,
-	P_CONTAINER		CHAR(10),
-	P_RETAILPRICE	DECIMAL,
-	P_COMMENT		VARCHAR(23)
-);
-
-DROP TABLE IF EXISTS SUPPLIER CASCADE;
-CREATE TABLE SUPPLIER (
-	S_SUPPKEY		SERIAL PRIMARY KEY,
-	S_NAME			CHAR(25),
-	S_ADDRESS		VARCHAR(40),
-	S_NATIONKEY		BIGINT NOT NULL, -- references N_NATIONKEY
-	S_PHONE			CHAR(15),
-	S_ACCTBAL		DECIMAL,
-	S_COMMENT		VARCHAR(101)
-);
-
-DROP TABLE IF EXISTS PARTSUPP CASCADE;
-CREATE TABLE PARTSUPP (
-	PS_PARTKEY		BIGINT NOT NULL, -- references P_PARTKEY
-	PS_SUPPKEY		BIGINT NOT NULL, -- references S_SUPPKEY
-	PS_AVAILQTY		INTEGER,
-	PS_SUPPLYCOST	DECIMAL,
-	PS_COMMENT		VARCHAR(199),
-	PRIMARY KEY (PS_PARTKEY, PS_SUPPKEY)
-);
-
-DROP TABLE IF EXISTS CUSTOMER CASCADE;
-CREATE TABLE CUSTOMER (
-	C_CUSTKEY		SERIAL PRIMARY KEY,
-	C_NAME			VARCHAR(25),
-	C_ADDRESS		VARCHAR(40),
-	C_NATIONKEY		BIGINT NOT NULL, -- references N_NATIONKEY
-	C_PHONE			CHAR(15),
-	C_ACCTBAL		DECIMAL,
-	C_MKTSEGMENT	CHAR(10),
-	C_COMMENT		VARCHAR(117)
-);
-
-DROP TABLE IF EXISTS ORDERS CASCADE;
-CREATE TABLE ORDERS (
-	O_ORDERKEY		SERIAL PRIMARY KEY,
-	O_CUSTKEY		BIGINT NOT NULL, -- references C_CUSTKEY
-	O_ORDERSTATUS	CHAR(1),
-	O_TOTALPRICE	DECIMAL,
-	O_ORDERDATE		DATE,
-	O_ORDERPRIORITY	CHAR(15),
-	O_CLERK			CHAR(15),
-	O_SHIPPRIORITY	INTEGER,
-	O_COMMENT		VARCHAR(79)
-);
-
-DROP TABLE IF EXISTS LINEITEM CASCADE;
-CREATE TABLE LINEITEM (
-	L_ORDERKEY		BIGINT NOT NULL, -- references O_ORDERKEY
-	L_PARTKEY		BIGINT NOT NULL, -- references P_PARTKEY (compound fk to PARTSUPP)
-	L_SUPPKEY		BIGINT NOT NULL, -- references S_SUPPKEY (compound fk to PARTSUPP)
-	L_LINENUMBER	INTEGER,
-	L_QUANTITY		DECIMAL,
-	L_EXTENDEDPRICE	DECIMAL,
-	L_DISCOUNT		DECIMAL,
-	L_TAX			DECIMAL,
-	L_RETURNFLAG	CHAR(1),
-	L_LINESTATUS	CHAR(1),
-	L_SHIPDATE		DATE,
-	L_COMMITDATE	DATE,
-	L_RECEIPTDATE	DATE,
-	L_SHIPINSTRUCT	CHAR(25),
-	L_SHIPMODE		CHAR(10),
-	L_COMMENT		VARCHAR(44),
-	PRIMARY KEY (L_ORDERKEY, L_LINENUMBER)
-);
-
-DROP TABLE IF EXISTS NATION CASCADE;
-CREATE TABLE NATION (
-	N_NATIONKEY		SERIAL PRIMARY KEY,
-	N_NAME			CHAR(25),
-	N_REGIONKEY		BIGINT NOT NULL,  -- references R_REGIONKEY
-	N_COMMENT		VARCHAR(152)
-);
-
-DROP TABLE IF EXISTS REGION CASCADE;
-CREATE TABLE REGION (
-	R_REGIONKEY	SERIAL PRIMARY KEY,
-	R_NAME		CHAR(25),
-	R_COMMENT	VARCHAR(152)
-);
-
 DELETE FROM customer;
-DELETE FROM lineitem;
-DELETE FROM nation;
-DELETE FROM orders;
-DELETE FROM part;
-DELETE FROM partsupp;
+--DELETE FROM lineitem;
+--DELETE FROM nation;
+--DELETE FROM orders;
+--DELETE FROM part;
+--DELETE FROM partsupp;
 DELETE FROM region;
 DELETE FROM supplier;
 
-ALTER TABLE lineitem ALTER COLUMN l_suppkey DROP NOT NULL;
+copy customer from '/Users/etouss/Documents/InfEd/tpch-dbgen/customer.tbl2' WITH DELIMITER as '|' NULL as 'NULL';
+copy lineitem from '/Users/etouss/Documents/InfEd/tpch-dbgen/lineitem.tbl2m' WITH DELIMITER as '|' NULL as 'NULL';
+--copy nation from '/Users/etouss/Documents/InfEd/tpch-dbgen/nation.tbl2' WITH DELIMITER as '|' NULL as 'NULL';
+--copy orders from '/Users/etouss/Documents/InfEd/tpch-dbgen/orders.tbl2' WITH DELIMITER as '|' NULL as 'NULL';
+--copy part from '/Users/etouss/Documents/InfEd/tpch-dbgen/part.tbl2m' WITH DELIMITER as '|' NULL as 'NULL';
+--copy partsupp from '/Users/etouss/Documents/InfEd/tpch-dbgen/partsupp.tbl2' WITH DELIMITER as '|' NULL as 'NULL';
+copy region from '/Users/etouss/Documents/InfEd/tpch-dbgen/region.tbl2' WITH DELIMITER as '|' NULL as 'NULL';
+copy supplier from '/Users/etouss/Documents/InfEd/tpch-dbgen/supplier.tbl2m' WITH DELIMITER as '|' NULL as 'NULL';
+
+
+
 ALTER TABLE lineitem ALTER COLUMN l_partkey DROP NOT NULL;
+UPDATE lineitem SET l_partkey = NULL WHERE l_partkey = 6;
+ALTER TABLE lineitem ALTER COLUMN l_suppkey DROP NOT NULL;
+UPDATE lineitem SET l_suppkey = NULL WHERE l_suppkey = 6;
 ALTER TABLE supplier ALTER COLUMN s_nationkey DROP NOT NULL;
+UPDATE supplier SET s_nationkey = NULL WHERE s_nationkey = 6;
 ALTER TABLE part ALTER COLUMN p_name DROP NOT NULL;
-
-
-copy customer from '/Users/etiennetoussaint/Documents/InfEd/tpch-dbgen/customer.tbl2' WITH DELIMITER as '|' NULL as 'NULL';
-copy lineitem from '/Users/etiennetoussaint/Documents/InfEd/tpch-dbgen/lineitem.tbl2m' WITH DELIMITER as '|' NULL as 'NULL';
-copy nation from '/Users/etiennetoussaint/Documents/InfEd/tpch-dbgen/nation.tbl2' WITH DELIMITER as '|' NULL as 'NULL';
-copy orders from '/Users/etiennetoussaint/Documents/InfEd/tpch-dbgen/orders.tbl2' WITH DELIMITER as '|' NULL as 'NULL';
-copy part from '/Users/etiennetoussaint/Documents/InfEd/tpch-dbgen/part.tbl2m' WITH DELIMITER as '|' NULL as 'NULL';
-copy partsupp from '/Users/etiennetoussaint/Documents/InfEd/tpch-dbgen/partsupp.tbl2' WITH DELIMITER as '|' NULL as 'NULL';
-copy region from '/Users/etiennetoussaint/Documents/InfEd/tpch-dbgen/region.tbl2' WITH DELIMITER as '|' NULL as 'NULL';
-copy supplier from '/Users/etiennetoussaint/Documents/InfEd/tpch-dbgen/supplier.tbl2m' WITH DELIMITER as '|' NULL as 'NULL';
+UPDATE part SET p_name = NULL WHERE p_name LIKE '%light%';

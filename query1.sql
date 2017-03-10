@@ -38,6 +38,7 @@ AND NOT EXISTS (
   WHERE l3.l_orderkey = l1.l_orderkey
   AND ( l3.l_suppkey <> l1.l_suppkey OR l3.l_suppkey IS NULL )
   AND ( l3.l_receiptdate > l3.l_commitdat OR l3.l_receiptdate IS NULL OR l3.l_commitdate IS NULL ))
+<<<<<<< HEAD
 
 
 
@@ -53,3 +54,5 @@ WHERE NOT EXISTS
  (SELECT * FROM Payments 
 	WHERE Payments.ord_id = Orders.ord_id
   0R Payments.ord_id IS NULL)
+=======
+>>>>>>> 79d6f8b0e81303ff3b2d926824ca6387169e9d42
